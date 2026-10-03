@@ -1,0 +1,14 @@
+# Mesma trilha de tarefas fixas, com a governança Minerva anexada a todos os papéis.
+# Comparar com experiment-fixed.yaml isola o efeito da governança.
+name: atena-fixed-tasks
+repository: https://github.com/Cris042/Atena.git
+base_ref: ac48dc552b817233547104a5d0acba932d41ab91
+requirements_file: examples/atena/requirements.yaml
+architecture_file: examples/atena/architecture.md
+security_file: examples/atena/security.md
+checks_file: config/checks.atena.yaml
+hidden_checks_file: config/hidden-checks.atena.yaml
+tasks_file: examples/atena/tasks.yaml
+governance_file: governance/minerva-benchmark.md
+max_repair_cycles: 2
+max_agent_steps: 80

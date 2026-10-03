@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Lint de sintaxe de todo PHP do projeto (exceto dependências de terceiros).
+set -uo pipefail
+status=0
+while IFS= read -r -d '' f; do
+  out=$(php -l "$f" 2>&1) || { echo "$out"; status=1; }
+done < <(find . -path ./Lib/vendor -prune -o -path ./vendor -prune -o -path ./.git -prune -o -name '*.php' -print0)
+[ "$status" -eq 0 ] && echo "Sem erros de sintaxe."
+exit "$status"

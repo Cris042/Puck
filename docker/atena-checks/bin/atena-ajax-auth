@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Endpoints acessados diretamente por HTTP (Models/ajax) sem nenhuma verificação de sessão.
+set -uo pipefail
+[ -d Models/ajax ] || { echo "Models/ajax não existe mais."; exit 0; }
+missing=$(grep -L '_SESSION' Models/ajax/*.php 2>/dev/null || true)
+if [ -n "$missing" ]; then
+  echo "Endpoints sem verificação de sessão:"; echo "$missing"
+  echo "total=$(echo "$missing" | wc -l)"
+  exit 1
+fi
+echo "Todos os endpoints de Models/ajax referenciam a sessão."

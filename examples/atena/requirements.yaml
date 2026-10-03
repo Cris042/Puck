@@ -1,0 +1,32 @@
+project: Atena
+objective: >
+  Modernizar o sistema acadêmico legado preservando comportamento funcional e criando uma base
+  mais testável, segura e sustentável, sem transformar o projeto em uma solução maior do que o necessário.
+requirements:
+  - id: REQ-001
+    priority: high
+    description: Preservar autenticação e separação de áreas de aluno, professor e secretaria.
+  - id: REQ-002
+    priority: high
+    description: Preservar gerenciamento de turmas, notas e boletim.
+  - id: REQ-003
+    priority: high
+    description: Preservar planejamento e registro de aulas.
+  - id: REQ-004
+    priority: medium
+    description: Preservar geração de relatórios e PDF.
+  - id: REQ-005
+    priority: medium
+    description: Preservar gestão de arquivos de aula.
+  - id: REQ-006
+    priority: medium
+    description: Preservar chat, calendário e eventos existentes.
+  - id: REQ-007
+    priority: high
+    description: Isolar acesso HTTP, regra de negócio e persistência em responsabilidades claras.
+  - id: REQ-008
+    priority: high
+    description: Adicionar testes automatizados para fluxos críticos alterados.
+  - id: REQ-009
+    priority: high
+    description: Não introduzir regressões conhecidas nos fluxos existentes.

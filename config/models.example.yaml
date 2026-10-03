@@ -1,0 +1,37 @@
+# Use IDs de modelo disponíveis na sua conta.
+# O benchmark não depende de nomes fixos: troque os IDs sem alterar o código.
+providers:
+  openai:
+    strong:
+      model: "gpt-5.5"
+      reasoning_effort: "medium"
+      temperature: 0
+    medium:
+      model: "gpt-5.4-mini"
+      reasoning_effort: "medium"
+      temperature: 0
+    weak:
+      model: "gpt-5.4-nano"
+      reasoning_effort: "low"
+      temperature: 0
+
+  anthropic:
+    strong:
+      model: "claude-opus-4-6"
+      reasoning_effort: "medium"
+      temperature: 0
+    medium:
+      model: "claude-sonnet-4-6"
+      reasoning_effort: "medium"
+      temperature: 0
+    weak:
+      model: "claude-haiku-4-5-20251001"
+      temperature: 0
+
+# Juiz fixo usado por `atena-bench evaluate`. Deve ser o MESMO em todas as execuções comparadas.
+# Para reduzir viés de autopreferência, use um provider diferente dos avaliados ou rode a
+# avaliação com dois juízes de providers diferentes e compare.
+judge:
+  provider: "anthropic"
+  model: "claude-opus-4-6"
+  temperature: 0
