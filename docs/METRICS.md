@@ -46,8 +46,35 @@ Notas 1–5 em requisitos, regressões, arquitetura, segurança, simplicidade e 
 
 Arquivos alterados, criados e removidos; linhas adicionadas e removidas; `changes.patch`.
 
-## A implementar (fases C–F do plano)
+## Oráculo oculto — `config/hidden-checks.yaml`
 
-Suíte de caracterização HTTP e dataset dourado; qualidade por linguagem (lizard, jscpd, Deptrac,
-go-arch-lint, PHPStan, staticcheck, cobertura); usabilidade (Playwright, KLM); carga (k6);
-segurança (Semgrep, ZAP, auditoria de dependências); catálogo de falhas por tipo.
+Rodam no esqueleto e no final, pelo sandbox, fora do alcance dos agentes. Todas emitem
+`PUCK_METRIC <nome> <inteiro>`, que viram contagens comparáveis (`<check>.<métrica>`).
+
+| Check | Métricas | Fonte |
+|---|---|---|
+| `caracterizacao` | `oraculo_<area>_total` / `_falhas` (saude, autenticacao, autorizacao, cadastros, regra_notas) | `oracle/suite` + dataset dourado do legado executado |
+| `sast` | `sast_<regra>`, `sast_total`, `sast_erros_varredura` | Semgrep 1.179.0, `config/semgrep/<linguagem>.yml` |
+| `dependencias` | `deps_vulnerabilidades`, `deps_alcancaveis` | `composer audit` / `govulncheck` (base consultada na data da execução) |
+| `dast` | `dast_alto`, `dast_medio`, `dast_baixo`, `dast_info` | ZAP baseline 2.17.0 |
+| `carga` | `carga_{leitura,escrita}_{p50,p95,max}_ms`, `_falhas_permil`, `carga_req_por_s_x100` (mediana e `_rN` por rodada) | k6 2.3.0, `oracle/carga/cenario.js` |
+
+Checks do projeto (`config/checks.<tech>.yaml`): `lint`, `arch` (contrato de camadas), `test` e
+`coverage` (`coverage_permille`, `coverage_core_permille` para domínio + regra).
+
+## Usabilidade — `atena-bench sandbox usabilidade`
+
+Por tarefa (`usab_tarefa_N_*`): conclusão verificada pela API, telas e navegações na reexecução, e
+KLM do roteiro gravado (`klm_ms`, operadores K/P/B/H/M, campos, cliques). Protocolo do avaliador:
+[`oracle/usabilidade/TAREFAS.md`](../oracle/usabilidade/TAREFAS.md).
+
+## Validade do próprio oráculo
+
+`tests/test_oraculo.py`: o dataset dourado é íntegro (hash) e cobre as quatro situações; a regra
+escrita reproduz todos os resultados do legado; a implementação de referência passa em tudo; e
+cada uma das seis mutações deliberadas é acusada na área certa.
+
+## A implementar
+
+Analyzers de qualidade por linguagem (fase D: lizard, jscpd, PHPMetrics, acoplamento) e catálogo
+de falhas por tipo.

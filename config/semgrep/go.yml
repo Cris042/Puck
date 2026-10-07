@@ -1,0 +1,69 @@
+# SAST do oráculo (Go): regras locais, sem registro remoto.
+rules:
+  - id: sql-interpolado
+    languages: [go]
+    severity: ERROR
+    message: SQL montado com variável; use parâmetros (base técnica 3.3)
+    pattern-either:
+      - pattern: $DB.$M($CTX, fmt.Sprintf(...), ...)
+      - pattern: $DB.$M(fmt.Sprintf(...), ...)
+      - pattern: $DB.$M($CTX, "..." + $X, ...)
+      - pattern: $DB.$M("..." + $X, ...)
+    metavariable-regex:
+      metavariable: $M
+      regex: ^(Query|QueryRow|Exec|QueryContext|QueryRowContext|ExecContext|Prepare|PrepareContext|SendBatch)$
+
+  - id: hash-senha-fraco
+    languages: [go]
+    severity: ERROR
+    message: md5/sha1 não servem para senha (base técnica 3.1)
+    pattern-either:
+      - pattern: md5.Sum(...)
+      - pattern: md5.New()
+      - pattern: sha1.Sum(...)
+      - pattern: sha1.New()
+
+  - id: hash-senha-nao-argon2id
+    languages: [go]
+    severity: WARNING
+    message: senha deve usar Argon2id (base técnica 3.1)
+    pattern-either:
+      - pattern: bcrypt.GenerateFromPassword(...)
+      - pattern: argon2.Key(...)
+
+  - id: aleatorio-nao-criptografico
+    languages: [generic]
+    severity: ERROR
+    message: math/rand importado; token, sessão e salt exigem crypto/rand
+    paths:
+      include: ["*.go"]
+      exclude: ["*_test.go"]
+    pattern-regex: '"math/rand(/v2)?"'
+
+  - id: servidor-sem-timeout
+    languages: [go]
+    severity: WARNING
+    message: http.ListenAndServe direto não tem timeouts (base técnica 3.3)
+    pattern-either:
+      - pattern: http.ListenAndServe(...)
+      - pattern: http.ListenAndServeTLS(...)
+
+  - id: tls-sem-verificacao
+    languages: [go]
+    severity: ERROR
+    message: verificação de certificado desligada
+    pattern: "tls.Config{..., InsecureSkipVerify: true, ...}"
+
+  - id: html-sem-escape
+    languages: [go]
+    severity: WARNING
+    message: template.HTML desliga o escape do html/template
+    pattern: template.HTML(...)
+
+  - id: pepper-no-codigo
+    languages: [generic]
+    severity: ERROR
+    message: pepper ou segredo fixo no código; use variável de ambiente (base técnica 3.1)
+    paths:
+      exclude: [".env.example", "*.md", "*_test.go"]
+    pattern-regex: (?i)(pepper|secret|senha_mestra)['"]?\s*(=>|=|:=|=|:)\s*['"`][A-Za-z0-9+/=_\-]{16,}['"`]

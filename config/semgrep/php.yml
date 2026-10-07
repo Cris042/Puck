@@ -1,0 +1,73 @@
+# SAST do oráculo (PHP/Laravel): regras locais, sem registro remoto, para o resultado não mudar
+# entre execuções. Cada id vira um contador comparável entre esqueleto e final.
+rules:
+  - id: sql-interpolado
+    languages: [php]
+    severity: ERROR
+    message: SQL montado com variável; use parâmetros (base técnica 3.3)
+    pattern-either:
+      - pattern: DB::$M("..." . $X, ...)
+      - pattern: DB::$M($X . "...", ...)
+      - pattern: DB::raw("..." . $X)
+      - pattern: DB::unprepared($X)
+      - pattern: $Q->whereRaw("..." . $X, ...)
+      - pattern: $Q->selectRaw("..." . $X, ...)
+      - pattern: $Q->orderByRaw("..." . $X, ...)
+      - pattern: $PDO->query("..." . $X)
+      - pattern: $PDO->exec("..." . $X)
+      - pattern-regex: (DB::(select|statement|insert|update|delete|raw)|->(whereRaw|selectRaw|orderByRaw|query|exec))\(\s*"[^"]*\$[a-zA-Z_{]
+
+  - id: hash-senha-fraco
+    languages: [php]
+    severity: ERROR
+    message: md5/sha1/crc32 não servem para senha (base técnica 3.1)
+    pattern-either:
+      - pattern: md5(...)
+      - pattern: sha1(...)
+      - pattern: crc32(...)
+      - pattern: hash("md5", ...)
+      - pattern: hash("sha1", ...)
+
+  - id: hash-senha-nao-argon2id
+    languages: [php]
+    severity: WARNING
+    message: senha deve usar Argon2id (base técnica 3.1)
+    pattern-either:
+      - pattern: password_hash($X, PASSWORD_BCRYPT, ...)
+      - pattern: password_hash($X, PASSWORD_DEFAULT, ...)
+      - pattern: password_hash($X, PASSWORD_ARGON2I, ...)
+      - pattern: Hash::driver("bcrypt")
+
+  - id: execucao-dinamica
+    languages: [php]
+    severity: ERROR
+    message: execução dinâmica de código ou de comando
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: unserialize(...)
+      - pattern: shell_exec(...)
+      - pattern: exec(...)
+      - pattern: system(...)
+      - pattern: passthru(...)
+
+  - id: blade-sem-escape
+    languages: [generic]
+    severity: WARNING
+    message: saída Blade sem escape
+    paths:
+      include: ["*.blade.php"]
+    pattern: "{!! ... !!}"
+
+  - id: debug-ligado
+    languages: [php]
+    severity: WARNING
+    message: modo debug fixo no código
+    pattern: "[..., 'debug' => true, ...]"
+
+  - id: pepper-no-codigo
+    languages: [generic]
+    severity: ERROR
+    message: pepper ou segredo fixo no código; use variável de ambiente (base técnica 3.1)
+    paths:
+      exclude: [".env.example", "*.md", "tests/**"]
+    pattern-regex: (?i)(pepper|secret|senha_mestra)['"]?\s*(=>|=|:)\s*['"][A-Za-z0-9+/=_\-]{16,}['"]

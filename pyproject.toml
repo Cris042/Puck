@@ -44,6 +44,8 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
+# Amostras de entrada (código ruim de propósito, roteiros exatamente como o codegen grava).
+extend-exclude = ["tests/fixtures"]
 
 [tool.ruff.lint]
 # Conjunto explícito: o padrão do ruff muda entre versões e quebraria o CI sem mudança de código.

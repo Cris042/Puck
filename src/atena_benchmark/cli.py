@@ -191,6 +191,68 @@ def sandbox_oracle(
     raise typer.Exit(run_oracle(tech, repo))
 
 
+@sandbox_app.command("sast")
+def sandbox_sast(tech: Annotated[str, typer.Option("--tech")], repo: Annotated[Path, typer.Option("--repo")]):
+    """Semgrep com as regras locais da linguagem (config/semgrep)."""
+    from .medicoes import sast
+
+    raise typer.Exit(sast(tech, repo))
+
+
+@sandbox_app.command("dast")
+def sandbox_dast(tech: Annotated[str, typer.Option("--tech")], repo: Annotated[Path, typer.Option("--repo")]):
+    """ZAP baseline contra a aplicação no ar (rede interna)."""
+    from .medicoes import dast
+
+    raise typer.Exit(dast(tech, repo))
+
+
+@sandbox_app.command("audit")
+def sandbox_audit(tech: Annotated[str, typer.Option("--tech")], repo: Annotated[Path, typer.Option("--repo")]):
+    """Vulnerabilidades conhecidas nas dependências (composer audit / govulncheck)."""
+    from .medicoes import auditoria
+
+    raise typer.Exit(auditoria(tech, repo))
+
+
+@sandbox_app.command("carga")
+def sandbox_carga(
+    tech: Annotated[str, typer.Option("--tech")],
+    repo: Annotated[Path, typer.Option("--repo")],
+    rodadas: Annotated[int, typer.Option()] = 3,
+    duracao: Annotated[str, typer.Option()] = "30s",
+):
+    """k6: aquecimento + rodadas na mesma instância; mediana e pontos por rodada."""
+    from .medicoes import carga
+
+    raise typer.Exit(carga(tech, repo, rodadas, duracao))
+
+
+@sandbox_app.command("subir")
+def sandbox_subir(
+    tech: Annotated[str, typer.Option("--tech")],
+    repo: Annotated[Path, typer.Option("--repo")],
+    porta: Annotated[int, typer.Option()] = 8080,
+):
+    """Sobe a aplicação com o cenário de usabilidade em 127.0.0.1, para gravar as tarefas."""
+    from .usabilidade import subir
+
+    raise typer.Exit(subir(tech, repo, porta))
+
+
+@sandbox_app.command("usabilidade")
+def sandbox_usabilidade(
+    tech: Annotated[str, typer.Option("--tech")],
+    repo: Annotated[Path, typer.Option("--repo")],
+    roteiros: Annotated[Path, typer.Option(help="Diretório com tarefa-1.py, tarefa-2.py, ...")],
+):
+    """Reexecuta os roteiros gravados no sandbox e calcula KLM, telas e conclusão."""
+    from .usabilidade import pontuar
+
+    codigo, _ = pontuar(tech, repo, roteiros)
+    raise typer.Exit(codigo)
+
+
 @sandbox_app.command("build-images")
 def sandbox_build_images():
     """Constrói as imagens de checks do harness que ainda não existirem."""

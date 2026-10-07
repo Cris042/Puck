@@ -66,6 +66,13 @@ TECHS: dict[str, TechSpec] = {
         env={"GOMODCACHE": "/deps/gomod", "GOFLAGS": "-mod=mod", "GOPROXY": "off",
              "GOTOOLCHAIN": "local"},
     ),
+    # Interna: implementação de referência do contrato, só para autovalidar oráculo/carga/DAST.
+    "referencia": TechSpec(
+        image="puck-referencia",
+        deps_files=("app.py",),
+        deps_command="true",
+        restore_command="true",
+    ),
 }
 
 
@@ -248,8 +255,11 @@ class AppStartError(SandboxError):
 
 
 @contextmanager
-def stack(tech: str, repo: Path, with_db: bool = True) -> Iterator[Stack]:
+def stack(tech: str, repo: Path, with_db: bool = True,
+          bootstrap: dict[str, str] | None = None) -> Iterator[Stack]:
     current = Stack(tech=tech, repo=repo, with_db=with_db)
+    if bootstrap:
+        current.bootstrap = dict(bootstrap)
     try:
         current.start()
         yield current
@@ -314,33 +324,49 @@ def run_make_target(tech: str, target: str, repo: Path) -> int:
         return completed.returncode
 
 
+@contextmanager
+def app_running(tech: str, repo: Path,
+                bootstrap: dict[str, str] | None = None) -> Iterator[tuple[Stack, str]]:
+    """Aplicação no ar numa rede interna; devolve (stack, URL interna).
+
+    `bootstrap` fixa o primeiro secretário (cenário de usabilidade); senão é aleatório.
+    """
+    deps = deps_volume(tech, repo)
+    with stack(tech, repo, bootstrap=bootstrap) as current:
+        yield current, current.start_app(deps)
+
+
+def run_tool(current: Stack, url: str, image: str, command: list[str],
+             extra_env: dict[str, str] | None = None, mounts: list[str] | None = None,
+             timeout: int = 1800) -> subprocess.CompletedProcess:
+    """Roda uma ferramenta na rede interna da aplicação, com TARGET_URL e o primeiro secretário."""
+    env = {"TARGET_URL": url, **{f"PUCK_BOOTSTRAP_{k}": v for k, v in current.bootstrap.items()},
+           **(extra_env or {})}
+    volumes = [arg for mount in (mounts or []) for arg in ("-v", mount)]
+    return subprocess.run(
+        ["docker", "run", "--rm", "--network", current.network, *_env_args(env), *volumes,
+         image, *command],
+        text=True, capture_output=True, check=False, timeout=timeout,
+    )
+
+
 def run_with_app(tech: str, repo: Path, image: str, command: list[str],
                  extra_env: dict[str, str] | None = None, mounts: list[str] | None = None) -> int:
-    """Sobe a aplicação e roda `image command` na mesma rede interna, com `TARGET_URL` definido.
+    """Sobe a aplicação e roda `image command` na mesma rede interna.
 
-    Usado pelo oráculo HTTP, pelo k6 e pelo ZAP. Exit 3 = aplicação não subiu.
+    Exit 2 = dependências do projeto não resolveram; exit 3 = aplicação não subiu.
     """
     try:
-        deps = deps_volume(tech, repo)
+        with app_running(tech, repo) as (current, url):
+            completed = run_tool(current, url, image, command, extra_env, mounts)
+            print((completed.stdout + "\n" + completed.stderr).strip()[-20000:])
+            return completed.returncode
     except DependencyError as exc:
         print(f"Dependências do projeto não resolveram:\n{exc}")
         return 2
-    with stack(tech, repo) as current:
-        try:
-            url = current.start_app(deps)
-        except AppStartError as exc:
-            print(f"Aplicação não subiu:\n{exc}")
-            return 3
-        env = {"TARGET_URL": url, **{f"PUCK_BOOTSTRAP_{k}": v for k, v in current.bootstrap.items()},
-               **(extra_env or {})}
-        volumes = [arg for mount in (mounts or []) for arg in ("-v", mount)]
-        completed = subprocess.run(
-            ["docker", "run", "--rm", "--network", current.network, *_env_args(env), *volumes,
-             image, *command],
-            text=True, capture_output=True, check=False,
-        )
-        print((completed.stdout + "\n" + completed.stderr).strip()[-20000:])
-        return completed.returncode
+    except AppStartError as exc:
+        print(f"Aplicação não subiu:\n{exc}")
+        return 3
 
 
 def run_oracle(tech: str, repo: Path) -> int:
@@ -353,6 +379,8 @@ def run_oracle(tech: str, repo: Path) -> int:
 HARNESS_IMAGES = {
     **{spec.image: Path("docker") / "checks" / tech for tech, spec in TECHS.items()},
     ORACLE_IMAGE: Path("oracle"),
+    "puck-referencia": Path("oracle") / "referencia",
+    "puck-usabilidade": Path("oracle") / "usabilidade",
 }
 
 

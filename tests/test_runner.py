@@ -63,6 +63,7 @@ def experiment(tmp_path: Path) -> Path:
     scaffold_sha = _git_repo(tmp_path / "scaffold", {"go.mod": "module escola\n"})
     legacy_sha = _git_repo(tmp_path / "atena", {"Models/HomeMolde.php": "<?php // login\n"})
     _git_repo(tmp_path / "minerva", {"README.md": "minerva\n"})
+    (tmp_path / "checks.yaml").write_text("checks: {}\n")
     config = {
         "name": "seco",
         "tech": "go",
@@ -73,7 +74,7 @@ def experiment(tmp_path: Path) -> Path:
         "base_tecnica_file": str(ROOT / "spec/base-tecnica/BASE_TECNICA.md"),
         "task_files": [str(ROOT / "prompts/tarefas/refatoracao-banco.md")],
         "context_files": {"mer_der": str(ROOT / "docs/legado/MER_DER.md")},
-        "checks_file": str(ROOT / "config/hidden-checks.yaml"),
+        "checks_file": str(tmp_path / "checks.yaml"),
         "m2_governance_files": [str(ROOT / "governance/m2/minerva.md")],
     }
     path = tmp_path / "experiment.yaml"

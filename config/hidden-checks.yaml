@@ -9,3 +9,28 @@ checks:
     timeout_seconds: 1800
     required: true
     parser: puck_metrics
+
+  # SAST: Semgrep com regras locais por linguagem (config/semgrep), offline e determinístico.
+  sast:
+    command: ["{python}", -m, atena_benchmark, sandbox, sast, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 900
+    parser: puck_metrics
+
+  # Dependências com vulnerabilidade conhecida (composer audit / govulncheck). Usa rede para a
+  # base de vulnerabilidades: o resultado depende da data, então compare células da mesma data.
+  dependencias:
+    command: ["{python}", -m, atena_benchmark, sandbox, audit, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 900
+    parser: puck_metrics
+
+  # DAST: ZAP baseline contra a aplicação no ar, na rede interna.
+  dast:
+    command: ["{python}", -m, atena_benchmark, sandbox, dast, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 1800
+    parser: puck_metrics
+
+  # Carga: k6, aquecimento + 3 rodadas de 30 s na mesma instância; mediana e cada rodada.
+  carga:
+    command: ["{python}", -m, atena_benchmark, sandbox, carga, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 1800
+    parser: puck_metrics

@@ -8,7 +8,7 @@ tech: go
 # conteúdo. Conteúdo diferente deste SHA recusa a execução (esqueleto congelado).
 scaffold:
   repository: scaffolds/go
-  ref: 6d6efc7d9f2f57169db4bbcdfb09cc6911cd7045
+  ref: 255628a03907a412e6c40f82d7b0abe83d3934a3
 
 # Atena legado no commit fixado. Exportado sem .git para o workspace de cada execução.
 legacy:

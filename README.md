@@ -46,6 +46,12 @@ atena-bench validate-config            # sem chamar LLM: modelos, parâmetros, p
 atena-bench validate-config --ping     # chama cada papel (texto + saída estruturada)
 ```
 
+## Imagens do harness
+
+```bash
+atena-bench sandbox build-images      # checks Laravel/Go, oráculo, referência, usabilidade
+```
+
 ## Executar
 
 ```bash
@@ -59,6 +65,23 @@ atena-bench compare runs/* -o reports/campanha-01   # mediana + pontos brutos po
 ```
 
 Execução com `valid: false` (falha de infraestrutura) é **reexecutada**, nunca pontuada.
+
+Medições avulsas sobre um workspace (as mesmas que os checks ocultos fazem):
+
+```bash
+atena-bench sandbox check  --tech go --target test --repo runs/<id>/repo
+atena-bench sandbox oracle --tech go --repo runs/<id>/repo     # caracterização HTTP
+atena-bench sandbox sast | audit | dast | carga --tech go --repo runs/<id>/repo
+atena-bench sandbox subir  --tech go --repo runs/<id>/repo     # gravar usabilidade
+atena-bench sandbox usabilidade --tech go --repo runs/<id>/repo --roteiros runs/<id>/artifacts/usabilidade
+```
+
+Etapa 1 (antes da campanha):
+
+```bash
+atena-bench legado gerar-dourado     # executa o Atena legado e grava oracle/dataset/notas-dourado.json
+atena-bench legado contaminacao      # modelos-sujeito reproduzem o Atena sem contexto?
+```
 
 ## Artefatos de cada execução
 
@@ -80,9 +103,9 @@ runs/<run-id>/
 
 ## Estado
 
-Fase A (reorientação do harness) concluída. Esqueletos, oráculo, analyzers, RAG/MCP e
-usabilidade/carga/segurança são as fases B–F de [`docs/PLANO.md`](docs/PLANO.md); até lá os checks
-saem `unavailable` e uma execução real não produz medida útil.
+Fases A, B, C e F concluídas: harness, esqueletos, sandbox, oráculo validado e medições de
+segurança, carga e usabilidade. Faltam os analyzers de qualidade (D), o RAG/MCP (E) e o piloto (G)
+— ver [`docs/PLANO.md`](docs/PLANO.md). Testes com Docker: `PUCK_DOCKER_TESTS=1 pytest`.
 
 ## Documentos
 

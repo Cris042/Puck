@@ -23,7 +23,9 @@ import re
 import secrets
 import threading
 import time
+import urllib.parse
 from collections import defaultdict, deque
+from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 MUTACAO = os.environ.get("PUCK_MUTACAO", "")
@@ -145,6 +147,28 @@ class Handler(BaseHTTPRequestHandler):
             return json.loads(self.rfile.read(tamanho) or b"{}")
         except json.JSONDecodeError as exc:
             raise Erro(400, "json_invalido") from exc
+
+    def _formulario(self) -> dict[str, str]:
+        tamanho = int(self.headers.get("Content-Length") or 0)
+        dados = urllib.parse.parse_qs(self.rfile.read(tamanho).decode())
+        return {k: v[0] for k, v in dados.items()}
+
+    def _html(self, titulo: str, corpo: str, status: int = 200):
+        pagina = (f"<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><title>{escape(titulo)}"
+                  f"</title></head><body><h1>{escape(titulo)}</h1>{corpo}</body></html>").encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(pagina)))
+        self.end_headers()
+        self.wfile.write(pagina)
+
+    def _redirecionar(self, destino: str, cookie: str | None = None):
+        self.send_response(303)
+        self.send_header("Location", destino)
+        if cookie:
+            self.send_header("Set-Cookie", cookie)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def _token(self) -> str | None:
         for parte in (self.headers.get("Cookie") or "").split(";"):
@@ -398,6 +422,78 @@ class Handler(BaseHTTPRequestHandler):
         self._responder(200, {"disciplinas": linhas})
 
 
+class Telas(Handler):
+    """Interface HTML mínima da referência: só para validar o pipeline de usabilidade."""
+
+    @rota("GET", "/")
+    def tela_entrar(self):
+        self._html("Entrar", "<form method='post' action='/entrar'>"
+                   "<label>E-mail <input name='email'></label>"
+                   "<label>Matrícula <input name='matricula'></label>"
+                   "<label>Senha <input name='senha' type='password'></label>"
+                   "<button>Entrar</button></form>")
+
+    @rota("POST", "/entrar")
+    def tela_entrar_enviar(self):
+        dados = self._formulario()
+        pessoa = next((p for p in ESTADO.pessoas.values() if p["email"] == dados.get("email")), None)
+        if not pessoa or pessoa["matricula"] != dados.get("matricula") or not _confere(dados.get("senha", ""), pessoa["hash"]):
+            return self._html("Entrar", "<p>Credenciais inválidas</p>", 401)
+        token = secrets.token_urlsafe(32)
+        ESTADO.sessoes[token] = pessoa["id"]
+        self._redirecionar("/inicio", f"sessao={token}; HttpOnly; SameSite=Lax; Path=/")
+
+    @rota("GET", "/inicio")
+    def tela_inicio(self):
+        pessoa = self._usuario()
+        if pessoa["perfil"] == "professor":
+            itens = "".join(f"<li><a href='/disciplinas/{d['id']}/notas'>{escape(d['nome'])}</a></li>"
+                            for d in ESTADO.disciplinas.values() if d["professor_id"] == pessoa["id"])
+            return self._html("Minhas disciplinas", f"<ul>{itens}</ul>")
+        if pessoa["perfil"] == "aluno":
+            linhas = "".join(
+                f"<tr><td>{escape(d['nome'])}</td><td>{_linha(d, pessoa['id'])['notas'][0]}</td>"
+                f"<td>{_linha(d, pessoa['id'])['situacao']}</td></tr>"
+                for d in ESTADO.disciplinas.values() if (d["turma_id"], pessoa["id"]) in ESTADO.matriculas)
+            return self._html("Meu boletim", f"<table><tr><th>Disciplina</th><th>1º bimestre</th>"
+                              f"<th>Situação</th></tr>{linhas}</table>")
+        turmas = "".join(f"<option value='{t['id']}'>{t['ano']} - {escape(ESTADO.cursos[t['curso_id']])} - "
+                         f"{escape(ESTADO.series[t['serie_id']])}</option>" for t in ESTADO.turmas.values())
+        alunos = "".join(f"<option value='{p['id']}'>{escape(p['nome'])}</option>"
+                         for p in ESTADO.pessoas.values() if p["perfil"] == "aluno")
+        self._html("Matrícula", "<form method='post' action='/matriculas'>"
+                   f"<label>Turma <select name='turma_id'>{turmas}</select></label>"
+                   f"<label>Aluno <select name='aluno_id'>{alunos}</select></label>"
+                   "<button>Matricular</button></form>")
+
+    @rota("GET", "/disciplinas/{disciplina_id}/notas")
+    def tela_notas(self, disciplina_id: int):
+        disciplina = self._disciplina_do_professor(disciplina_id)
+        linhas = "".join(
+            f"<tr><td>{escape(ESTADO.pessoas[aid]['nome'])}</td><td><input name='nota_{aid}' "
+            f"aria-label='Nota de {escape(ESTADO.pessoas[aid]['nome'])}'></td></tr>"
+            for (tid, aid) in sorted(ESTADO.matriculas) if tid == disciplina["turma_id"])
+        self._html(f"Notas do 1º bimestre - {disciplina['nome']}",
+                   f"<form method='post'><table>{linhas}</table><button>Salvar</button></form>")
+
+    @rota("POST", "/disciplinas/{disciplina_id}/notas")
+    def tela_notas_enviar(self, disciplina_id: int):
+        self._disciplina_do_professor(disciplina_id)
+        for chave, valor in self._formulario().items():
+            if chave.startswith("nota_") and valor.strip():
+                registro = ESTADO.notas.setdefault((disciplina_id, int(chave[5:])),
+                                                   {"notas": [None] * 4, "recuperacoes": [None] * 4})
+                registro["notas"][0] = min(float(valor) if "." in valor else int(valor), 100)
+        self._html("Notas salvas", "<p>Notas salvas.</p><a href='/inicio'>Voltar</a>")
+
+    @rota("POST", "/matriculas")
+    def tela_matricular(self):
+        self._usuario("secretario")
+        dados = self._formulario()
+        ESTADO.matriculas.add((int(dados["turma_id"]), int(dados["aluno_id"])))
+        self._html("Matrícula feita", "<p>Matrícula feita.</p>")
+
+
 def _publico(pessoa: dict) -> dict:
     return {k: pessoa[k] for k in ("id", "nome", "email", "matricula")}
 
@@ -419,7 +515,7 @@ def _linha(disciplina: dict, aluno_id: int) -> dict:
 def main() -> None:
     _bootstrap()
     porta = int(os.environ.get("PORT", "8080"))
-    ThreadingHTTPServer(("0.0.0.0", porta), Handler).serve_forever()
+    ThreadingHTTPServer(("0.0.0.0", porta), Telas).serve_forever()
 
 
 if __name__ == "__main__":

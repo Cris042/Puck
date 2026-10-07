@@ -40,11 +40,11 @@ Protocolo de referência: *Benchmark de metodologias de desenvolvimento assistid
 | Fase | Entrega | Critério de pronto | Etapa do protocolo |
 |---|---|---|---|
 | **A. Reorientação do harness** ✅ 2026-10-07 | eixos tech × metodologia; M1 agente único; M2 hierárquica com documentos; telemetria em chamada separada e validada; prompts na estrutura de 8 seções; `models.yaml` só Claude com `effort`; SHAs dos 4 repositórios no `summary.json`; mediana + pontos brutos; dois juízes | testes do harness passam; dry-run com modelos falsos produz todos os artefatos | 2, 3, 5 |
-| **B. Alvos executáveis** | esqueletos Laravel e Go conforme a base técnica; compose com PostgreSQL; etapa do harness que sobe a app e espera `/saude` | esqueleto sobe duas vezes do zero com o mesmo resultado | 1 |
-| **C. Oráculo** | Atena legado rodando (PHP + banco do MER); contrato HTTP (OpenAPI); suíte de caracterização HTTP independente de stack; dataset dourado; seed sintético | quebrar regra de propósito e o oráculo acusar; baseline reproduzível duas vezes | 1 |
+| **B. Alvos executáveis** ✅ 2026-10-07 | esqueletos Laravel e Go conforme a base técnica; compose com PostgreSQL; etapa do harness que sobe a app e espera `/saude` | esqueleto sobe duas vezes do zero com o mesmo resultado | 1 |
+| **C. Oráculo** ✅ 2026-10-07 | Atena legado rodando (PHP + banco do MER); contrato HTTP (OpenAPI); suíte de caracterização HTTP independente de stack; dataset dourado; seed sintético | quebrar regra de propósito e o oráculo acusar; baseline reproduzível duas vezes | 1 |
 | **D. Analyzers** | Deptrac / go-arch-lint com o contrato; lizard, jscpd, cobertura, PHPStan, staticcheck; delta base → head | métricas reconstruídas só pelos artefatos | 3 |
 | **E. RAG + MCP** | extração de regras (Pydantic) → dataset dourado; índice pgvector híbrido + rerank; `buscar_contexto_legado`; servidor MCP com `pathguard`; avaliação de 30 perguntas | delta vetorial × híbrida medido; índice congelado | 4, 5 |
-| **F. Usabilidade, carga, segurança** | Playwright (KLM), k6, ZAP baseline, Semgrep por linguagem | cenários idênticos rodando contra as duas stacks | 6 |
+| **F. Usabilidade, carga, segurança** ✅ 2026-10-07 | Playwright (KLM), k6, ZAP baseline, Semgrep por linguagem | cenários idênticos rodando contra as duas stacks | 6 |
 | **G. Piloto e campanha** | calibração dos juízes; ruído de base; 8 execuções; análise | protocolo, seção 10, etapas 6 e 7 | 6, 7 |
 
 ## 4. Estado da fase A
@@ -60,6 +60,22 @@ Coberto por teste: roteamento M1/M2, teto de reparo, telemetria (`attempt`/`need
 harness, falha de parse como métrica, regressão sem teste rejeitada), governança só na M2, prompts
 nas 8 seções, patch do juiz sem `docs/`, mediana e pontos brutos, falso sucesso, e uma execução seca
 ponta a ponta com repositórios git locais.
+
+## 4.1 Estado das fases B, C e F
+
+- **B:** esqueletos `scaffolds/laravel` (PHP 8.5.11, Laravel 13) e `scaffolds/go` (Go 1.27.1)
+  passam em lint, arch, test e coverage no sandbox, sobem e respondem `/saude`; SAST e auditoria
+  limpos. Congelados por SHA de conteúdo. O contrato de camadas acusa violações plantadas nas duas
+  stacks.
+- **C:** dataset dourado gerado executando o legado (148 casos, reproduzível byte a byte);
+  contrato HTTP; oráculo com 175 testes; a referência passa em tudo e as 6 mutações são acusadas.
+  Etapa 1 cumprida, exceto a **verificação de contaminação**, que exige rodar
+  `atena-bench legado contaminacao` com a chave da API.
+- **F:** SAST (regras validadas contra amostras boas e ruins), dependências, ZAP, k6 (aquecimento
+  + 3 rodadas, mediana) e usabilidade (reexecução de roteiros gravados + KLM), todos verificados
+  contra a referência pelo sandbox.
+- **Falta:** D (analyzers de qualidade), E (RAG + MCP), G (piloto e campanha); gravações de
+  usabilidade são manuais por célula.
 
 ## 5. Decisões pendentes (precisam do seu aval)
 
