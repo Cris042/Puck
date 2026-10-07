@@ -16,6 +16,18 @@ def mark_untracked_as_intent_to_add(repo: Path) -> None:
     _run(repo, "add", "--intent-to-add", "--all", "--", ".")
 
 
+def snapshot_tree(repo: Path) -> str:
+    """SHA de uma árvore com o estado atual do workspace, sem criar commit."""
+    _run(repo, "add", "-A", "--", ".")
+    return _run(repo, "write-tree")
+
+
+def diff_since(repo: Path, tree: str) -> str:
+    """Diff do que mudou no workspace desde `snapshot_tree` (uma etapa de agente)."""
+    after = snapshot_tree(repo)
+    return _run(repo, "diff", tree, after)
+
+
 def collect_git_stats(repo: Path) -> dict:
     mark_untracked_as_intent_to_add(repo)
     numstat = _run(repo, "diff", "HEAD", "--numstat", "--", ".")

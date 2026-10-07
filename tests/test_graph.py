@@ -7,10 +7,11 @@ from atena_benchmark.config import ChecksConfig
 from atena_benchmark.graph import build_graph
 from atena_benchmark.schemas import (
     ArchitecturePlan,
-    ExecutionReport,
     PlanningOutput,
     ReviewResult,
+    StepReport,
     TaskSpec,
+    TelemetryRecord,
 )
 
 
@@ -26,56 +27,79 @@ def _review(approved: bool) -> ReviewResult:
 
 
 class FakeAgents:
-    """Substitui as LLMs: T-1 aprova de primeira, T-2 estoura o limite, T-3 nunca aprova."""
+    """Substitui as LLMs. M2: T-1 aprova de primeira, T-2 estoura o limite, T-3 nunca aprova."""
 
-    def __init__(self):
+    def __init__(self, tasks: list[TaskSpec] | None = None):
         self.calls: list[str] = []
+        self.tasks = tasks or []
 
-    def architect(self, *args):
-        self.calls.append("architect")
+    def checkpoint(self) -> str:
+        return "tree"
+
+    def telemetry(self, *, stage, task_id, attempt, needs_rework, since_tree, step, requirements):
+        self.calls.append(f"telemetry:{stage}:{task_id}:{attempt}")
+        return TelemetryRecord(
+            stage=stage, task_id=task_id, attempt=attempt, needs_rework=needs_rework,
+            parse_ok=task_id != "T-3",
+        )
+
+    def agent(self, brief):
+        self.calls.append("agent")
+        return StepReport(status="completed", final_message="STATUS: success")
+
+    def architect(self, brief, documents):
+        self.calls.append(f"architect:{','.join(documents)}")
         return ArchitecturePlan(summary="plano")
 
-    def planner(self, *args):
+    def planner(self, brief, plan):
         self.calls.append("planner")
-        return PlanningOutput(summary="x", tasks=[])
+        return PlanningOutput(summary="x", tasks=self.tasks)
 
-    def implement(self, task, *args):
+    def implement(self, task, brief, plan):
         self.calls.append(f"implement:{task.id}")
         if task.id == "T-2":
             raise GraphRecursionError("limite")
-        return ExecutionReport(status="success", summary="feito")
+        return StepReport(status="completed", final_message="STATUS: success")
 
-    def repair(self, task, *args):
+    def repair(self, task, review, brief):
         self.calls.append(f"repair:{task.id}")
-        return ExecutionReport(status="partial", summary="corrigido")
+        return StepReport(status="completed", final_message="STATUS: partial")
 
     def review(self, *, task, final=False, **kwargs):
         self.calls.append(f"review:{task.id if task else 'FINAL'}")
         return _review(final or (task is not None and task.id == "T-1"))
 
 
-def _run(tmp_path: Path, fixed_tasks):
-    agents = FakeAgents()
-    graph = build_graph(agents, CheckRunner(tmp_path, ChecksConfig()))
+def _run(tmp_path: Path, methodology: str, tasks=None):
+    agents = FakeAgents(tasks)
+    graph = build_graph(methodology, agents, CheckRunner(tmp_path, ChecksConfig()))
     state = graph.invoke(
         {
+            "brief": "b",
             "requirements": "r",
-            "architecture": "a",
-            "security": "s",
-            "fixed_tasks": fixed_tasks,
+            "documents": ["ADR", "PRD"],
             "baseline_check_results": [],
             "max_repair_cycles": 2,
+            "telemetry": [],
             "errors": [],
         }
     )
     return agents, state
 
 
-def test_fixed_tasks_skip_planner_and_failures_do_not_abort_run(tmp_path: Path):
-    tasks = [TaskSpec(id=f"T-{i}", title=f"t{i}", description="d") for i in (1, 2, 3)]
-    agents, state = _run(tmp_path, tasks)
+def test_m1_is_a_single_agent_without_gates(tmp_path: Path):
+    agents, state = _run(tmp_path, "m1")
+    assert agents.calls == ["agent", "telemetry:agent:M1:1"]
+    assert "final_review" not in state
+    assert state["telemetry"][0].needs_rework is None
 
-    assert "planner" not in agents.calls
+
+def test_m2_runs_roles_with_bounded_repair_and_harness_telemetry(tmp_path: Path):
+    tasks = [TaskSpec(id=f"T-{i}", title=f"t{i}", description="d") for i in (1, 2, 3)]
+    agents, state = _run(tmp_path, "m2", tasks)
+
+    assert agents.calls[0] == "architect:ADR,PRD"
+    assert "planner" in agents.calls
     assert state["final_review"].approved
     assert state["tasks_completed"] == 1
 
@@ -83,13 +107,23 @@ def test_fixed_tasks_skip_planner_and_failures_do_not_abort_run(tmp_path: Path):
     assert outcomes["T-1"].approved and outcomes["T-1"].repair_cycles == 0
     assert not outcomes["T-2"].approved and "limite" in outcomes["T-2"].error
     assert outcomes["T-3"].repair_cycles == 2  # teto respeitado
+    assert agents.calls.count("repair:T-3") == 2
 
     kinds = {(e.stage, e.task_id): e.kind for e in state["errors"]}
     assert kinds[("implement", "T-2")] == "agent_step_limit"
-    assert agents.calls.count("repair:T-3") == 2
+
+    # Telemetria: uma por etapa de escrita; attempt e needs_rework vêm do harness.
+    records = {(r.task_id, r.attempt): r for r in state["telemetry"]}
+    assert records[("T-1", 1)].needs_rework is False
+    assert records[("T-3", 1)].needs_rework is True
+    assert records[("T-3", 3)].stage == "repair"
+    # T-1: 1 implementação; T-2 e T-3: implementação + 2 reparos cada (estouro de passos conta
+    # contra o modelo, então T-2 também entra no ciclo de reparo).
+    assert len(state["telemetry"]) == 7
 
 
-def test_planner_is_used_without_fixed_tasks(tmp_path: Path):
-    agents, state = _run(tmp_path, [])
+def test_m2_without_tasks_goes_to_final_review(tmp_path: Path):
+    agents, state = _run(tmp_path, "m2", [])
     assert "planner" in agents.calls
     assert state["tasks"] == []
+    assert state["final_review"].approved

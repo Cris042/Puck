@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class Decision(BaseModel):
@@ -20,6 +20,8 @@ class ArchitecturePlan(BaseModel):
     affected_areas: list[str] = Field(default_factory=list)
     risks: list[str] = Field(default_factory=list)
     explicitly_not_doing: list[str] = Field(default_factory=list)
+    # Caminhos dos documentos (ADR/PRD/HLD/FDD) gravados no workspace pelo arquiteto da M2.
+    documents_written: list[str] = Field(default_factory=list)
 
 
 class TaskSpec(BaseModel):
@@ -37,58 +39,67 @@ class PlanningOutput(BaseModel):
     tasks: list[TaskSpec]
 
 
-class RequirementMetrics(BaseModel):
-    addressed: list[str] = Field(default_factory=list)
-    not_addressed: list[str] = Field(default_factory=list)
-    possible_regressions: list[str] = Field(default_factory=list)
+class StepReport(BaseModel):
+    """Saída de uma chamada de execução (implementar, reparar, agente único).
+
+    Texto livre do executor: a telemetria estruturada sai de uma chamada separada, para não
+    ensinar o executor a se autoavaliar e para seus tokens não entrarem no custo de execução.
+    """
+
+    status: Literal["completed", "failed"]
+    final_message: str = ""
+    tool_calls: list[str] = Field(default_factory=list)
 
 
-class ArchitectureMetrics(BaseModel):
-    followed: bool = True
-    violations: list[str] = Field(default_factory=list)
+Confidence = Literal["high", "medium", "low"]
 
 
-class ImplementationMetrics(BaseModel):
-    files_created: list[str] = Field(default_factory=list)
-    files_modified: list[str] = Field(default_factory=list)
-    files_deleted: list[str] = Field(default_factory=list)
-    dependencies_added: list[str] = Field(default_factory=list)
-    abstractions_created: list[str] = Field(default_factory=list)
+class RequirementTelemetry(BaseModel):
+    id: str
+    # IMPLEMENTADO × VALIDADO: validado só com teste/check executado que exercita o requisito.
+    state: Literal["validated", "implemented", "not_implemented"]
+    confidence: Confidence
+    evidence: str = ""
 
 
-class SecurityMetrics(BaseModel):
-    issues_found: list[str] = Field(default_factory=list)
-    issues_fixed: list[str] = Field(default_factory=list)
-    possible_new_risks: list[str] = Field(default_factory=list)
+class TelemetryReport(BaseModel):
+    """Extraída do diff + transcript por um modelo fixo; validada com Pydantic."""
 
-
-class OverengineeringMetrics(BaseModel):
-    detected: bool = False
-    items: list[str] = Field(default_factory=list)
-
-
-class ValidationMetrics(BaseModel):
+    declared_status: Literal["success", "partial", "failed", "unknown"] = Field(
+        description="Status que o EXECUTOR declarou no transcript; unknown se não declarou."
+    )
+    requirements: list[RequirementTelemetry] = Field(default_factory=list)
     tests_executed: list[str] = Field(default_factory=list)
     tests_failed: list[str] = Field(default_factory=list)
-    not_validated: list[str] = Field(default_factory=list)
-
-
-class ReworkMetrics(BaseModel):
-    required: bool = False
-    reason: str = ""
-
-
-class ExecutionReport(BaseModel):
-    status: Literal["success", "partial", "failed"]
-    summary: str
-    requirements: RequirementMetrics = Field(default_factory=RequirementMetrics)
-    architecture: ArchitectureMetrics = Field(default_factory=ArchitectureMetrics)
-    implementation: ImplementationMetrics = Field(default_factory=ImplementationMetrics)
-    security: SecurityMetrics = Field(default_factory=SecurityMetrics)
-    overengineering: OverengineeringMetrics = Field(default_factory=OverengineeringMetrics)
-    validation: ValidationMetrics = Field(default_factory=ValidationMetrics)
-    rework: ReworkMetrics = Field(default_factory=ReworkMetrics)
+    possible_regressions: list[str] = Field(default_factory=list)
+    architecture_violations: list[str] = Field(default_factory=list)
+    security_risks: list[str] = Field(default_factory=list)
+    abstractions_created: list[str] = Field(default_factory=list)
+    dependencies_added: list[str] = Field(default_factory=list)
+    overengineering_signals: list[str] = Field(default_factory=list)
     decisions: list[Decision] = Field(default_factory=list)
+    # Preenchido pela validação, não pelo modelo.
+    possible_regressions_rejected: bool = False
+
+    @model_validator(mode="after")
+    def _regressions_need_tests(self) -> TelemetryReport:
+        # Regressão "possível" sem nenhum teste executado é palpite: não entra na métrica.
+        if self.possible_regressions and not self.tests_executed:
+            self.possible_regressions = []
+            self.possible_regressions_rejected = True
+        return self
+
+
+class TelemetryRecord(BaseModel):
+    """Envelope do harness: attempt e needs_rework vêm do harness, nunca do modelo."""
+
+    stage: str
+    task_id: str = ""
+    attempt: int = 1
+    needs_rework: bool | None = None
+    parse_ok: bool
+    error: str = ""
+    report: TelemetryReport | None = None
 
 
 class CheckResult(BaseModel):
@@ -133,7 +144,10 @@ class TokenUsage(BaseModel):
 
 class InvocationMetric(BaseModel):
     role: str
-    tier: str
+    # execution entra no custo da metodologia; telemetry e judge são instrumento, medidos à parte.
+    kind: Literal["execution", "telemetry", "judge"] = "execution"
+    model: str = ""
+    started_at: str = ""
     duration_ms: float
     task_id: str = ""
     usages: list[TokenUsage] = Field(default_factory=list)
@@ -169,23 +183,31 @@ class TaskOutcome(BaseModel):
 class ExperimentSummary(BaseModel):
     run_id: str
     experiment: str
-    provider: str
-    strategy: str
-    governance: str = "none"
-    base_commit: str = ""
-    task_source: Literal["planner", "fixed"] = "planner"
+    tech: str
+    methodology: str
+    # SHA efetivo de cada repositório envolvido (workspace, legado, referências).
+    source_shas: dict[str, str] = Field(default_factory=dict)
+    # Parâmetros de geração por papel, como declarados no models.yaml.
+    generation_params: dict[str, dict] = Field(default_factory=dict)
     valid: bool = True
     started_at: str
     finished_at: str
     pricing_date: str
     total_duration_ms: float
+    # Custo e tokens de EXECUÇÃO (o que a metodologia consumiu).
     total_cost_usd: float
     total_input_tokens: int
     total_output_tokens: int
+    total_cache_read_tokens: int = 0
     total_tokens: int
-    repair_cycles: int
-    tasks_total: int
-    tasks_completed: int
+    # Telemetria: instrumento, nunca somada ao custo da metodologia.
+    telemetry_cost_usd: float = 0
+    telemetry_tokens: int = 0
+    telemetry_records: int = 0
+    telemetry_parse_failures: int = 0
+    repair_cycles: int = 0
+    tasks_total: int = 0
+    tasks_completed: int = 0
     final_review: ReviewResult | None = None
     task_outcomes: list[TaskOutcome] = Field(default_factory=list)
     errors: list[RunError] = Field(default_factory=list)
@@ -195,10 +217,6 @@ class ExperimentSummary(BaseModel):
     hidden_baseline_checks: list[CheckResult] = Field(default_factory=list)
     hidden_final_checks: list[CheckResult] = Field(default_factory=list)
     invocations: list[InvocationMetric] = Field(default_factory=list)
-
-
-class TasksFile(BaseModel):
-    tasks: list[TaskSpec]
 
 
 class DimensionScore(BaseModel):

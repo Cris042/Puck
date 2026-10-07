@@ -1,69 +1,67 @@
 # Metodologia
 
-## Pergunta do experimento
-Comparar estratégias de uso de LLMs na evolução de um sistema legado, observando qualidade de engenharia, custo e eficiência.
+## Pergunta
 
-## Variáveis
+Esta forma de trabalhar com LLM (M2, governada) rende mais que aquela (M1, direta) na reescrita de
+uma fatia vertical de um sistema legado — em custo, tempo, corretude, qualidade, usabilidade,
+desempenho e segurança? **Não** responde qual componente causou a diferença: M1 e M2 diferem em
+vários fatores ao mesmo tempo (topologia, modelos, governança, documentos, gates).
 
-| Variável | Valores | Onde se define |
+## Desenho
+
+| Fator | Níveis | Onde se define |
 |---|---|---|
-| Provider | `openai`, `anthropic` | `--provider` |
-| Estratégia | `single`, `hierarchical` | `--strategy` |
-| Governança | `none`, `minerva-benchmark` | `governance_file` no experimento |
+| Tech | `laravel`, `go` | `spec/atena/experiment-<tech>.yaml` |
+| Metodologia | `m1`, `m2` | `atena-bench run -m` |
+| Repetição | 2 por célula | execuções independentes |
 
-Todo o resto fica constante: commit base, requisitos, arquitetura, tarefas, prompts, checks,
-limite de correções, limite de passos por agente, tabela de preços e versão das ferramentas.
+Análise principal: M1 × M2 **dentro** de cada tech.
 
-### `single`
-O tier `strong` executa arquitetura, planejamento, implementação, correção e revisão.
+## Constantes
 
-### `hierarchical`
-- `strong`: arquitetura e revisão;
-- `medium`: planejamento/orquestração;
-- `weak`: implementação e correções.
+SHA do esqueleto, do legado e das referências (registrados em `summary.json`); especificação, base
+técnica e tarefas (mesmo `brief.md` para M1 e M2); ferramentas dos agentes; contexto do legado;
+prompts de telemetria e do juiz; checks visíveis e ocultos; limites de passos e de reparo; tabela
+de preços com data; parâmetros de geração por papel.
 
-### Governança
-`governance/minerva-benchmark.md` é um recorte congelado das regras do Minerva (papéis,
-triagem por severidade, `⚠️ DÍVIDA`, `❓ LACUNA`, ADR para decisão estrutural). Comparar
-`experiment-fixed.yaml` com `experiment-fixed-minerva.yaml` isola o efeito da governança.
+**Parâmetros de geração.** Opus 5.5 e Sonnet 5.5 não aceitam `temperature`, `top_p` nem `top_k` e
+não desligam o raciocínio. O controle é `effort` e `max_tokens`, declarados por papel e copiados
+para o `summary.json`. A amostragem é fixada pelo provider e não é controlável: ameaça à validade.
 
-## Trilhas
+## Tratamentos
 
-- **Tarefas fixas (`tasks_file`) — use para comparar.** Todas as execuções implementam as mesmas
-  tarefas; o planner não é chamado. Taxa de aprovação, custo por tarefa e regressões passam a ser
-  comparáveis.
-- **Aberta (planner decide) — use para observar.** Cada execução escolhe tarefas diferentes, então
-  "tarefas aprovadas" não é comparável entre execuções.
+- **M1:** um agente (`prompts/m1/agente.md`), uma sessão de até `m1_max_agent_steps` passos. Não
+  recebe governança, documentos de processo, revisor nem reparo.
+- **M2:** grafo de papéis (`prompts/m2/`), governança de `governance/m2/` anexada a todos eles,
+  documentos ADR/PRD/HLD/FDD gravados pelo arquiteto, revisão por tarefa e reparo limitado a
+  `max_repair_cycles`.
 
-## Três camadas de evidência
+## Evidência, do mais ao menos objetivo
 
-1. **Checks visíveis** (`checks_file`): o agente pode rodá-los e o revisor os recebe. Funcionam
-   como o CI do projeto.
-2. **Checks ocultos** (`hidden_checks_file`): rodam só no baseline e no final, fora do alcance das
-   ferramentas dos agentes. São o oráculo: medem sem ensinar, e não podem ser "otimizados" pelo
-   modelo. A barreira é de filesystem, não de prompt.
-3. **Juiz independente** (`atena-bench evaluate`): o revisor dentro do workflow é o modelo do
-   próprio provider avaliado; ele serve ao ciclo de correção, mas não para comparar providers.
-   O juiz é fixo para a campanha inteira, não sabe provider/estratégia/modelo e pontua 1–5 em seis
-   dimensões. Para reduzir viés de autopreferência, use um juiz de provider diferente dos
-   avaliados ou dois juízes de providers distintos e reporte ambos.
+1. **Oráculo oculto** (`hidden_checks_file`): roda no esqueleto e no final, fora do alcance dos
+   agentes. Mede sem ensinar.
+2. **Checks do projeto** (`checks_file`): os agentes podem rodá-los; o harness registra o resultado
+   no esqueleto e no final.
+3. **Juízes** (`atena-bench evaluate`): fixos para a campanha, cegos à metodologia (documentos em
+   `docs/` retirados do patch). Um Claude calibrado contra 30 casos rotulados e um de outro
+   provider; reportar a concordância.
+4. **Telemetria**: o que o executor declarou e o que o diff mostra. Entra na métrica de
+   **calibração** (falso sucesso), nunca no índice de qualidade.
 
 ## Validade de uma execução
 
-- Falha de infraestrutura (rede, rate limit, autenticação, bug do harness) marca `valid: false`.
-  A execução é repetida com novo run ID e não entra nas médias.
-- Estourar `max_agent_steps` ou devolver saída estruturada inválida conta **contra o modelo**:
-  a tarefa fica reprovada e a execução segue para a próxima tarefa.
-- Use SHA em `base_ref`; o workspace registra o commit efetivamente usado (`base_commit`).
+- Falha de infraestrutura (rede, rate limit, autenticação, bug do harness) marca `valid: false`: a
+  execução é repetida com novo run ID e não entra na análise.
+- Estourar passos ou devolver saída estruturada inválida conta **contra a metodologia**.
+- Workspace nunca é reutilizado.
 
-## Repetições
-Pelo menos 3 execuções válidas de cada combinação provider × estratégia × governança. Agregue com
-`atena-bench compare runs/*` (média ± desvio padrão). Com 3 repetições, diferenças menores que o
-desvio padrão não sustentam conclusão.
+## Análise
+
+`atena-bench compare` reporta, por tech × metodologia, a **mediana e todos os pontos**. Com 2
+repetições por célula não há teste de significância; diferenças menores que a dispersão entre
+repetições não sustentam conclusão.
 
 ## Pré-registro
-Antes da primeira execução da campanha, registre: hipóteses, métricas primárias, pesos e critério
-de leitura. Escolher a métrica depois de ver o resultado invalida a comparação.
 
-## Interpretação
-O benchmark mede desempenho **neste cenário**. Ele não demonstra superioridade universal de um modelo. Sistemas financeiros, críticos, sociais, internos ou experimentais possuem riscos e prioridades diferentes, portanto os trade-offs mudam conforme o domínio.
+Antes da primeira execução: matriz, hipóteses, métricas primárias e pesos do índice de qualidade em
+documento versionado. Escolher a métrica depois de ver o resultado invalida a comparação.

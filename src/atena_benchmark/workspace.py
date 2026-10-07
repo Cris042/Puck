@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -17,6 +18,44 @@ class Workspace:
 def _run(command: list[str], cwd: Path | None = None) -> str:
     completed = subprocess.run(command, cwd=cwd, check=True, text=True, capture_output=True)
     return completed.stdout.strip()
+
+
+_FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
+
+
+def resolve_sha(repository: str, ref: str) -> str:
+    """SHA efetivo de `ref`. Caminho local é resolvido no clone; remoto, via `git ls-remote`.
+
+    SHA completo é devolvido como está (ls-remote não resolve SHA). Falha vira texto explícito,
+    nunca um valor que pareça SHA.
+    """
+    path = Path(repository).expanduser()
+    if (path / ".git").exists():
+        completed = subprocess.run(
+            ["git", "rev-parse", f"{ref}^{{commit}}"], cwd=path, text=True,
+            capture_output=True, check=False,
+        )
+        if completed.returncode == 0:
+            return completed.stdout.strip()
+    if _FULL_SHA.match(ref):
+        return ref
+    completed = subprocess.run(
+        ["git", "ls-remote", repository, ref], text=True, capture_output=True, check=False
+    )
+    first = completed.stdout.split()
+    return first[0] if first else f"unresolved:{ref}"
+
+
+def export_tree(source: str, ref: str, dest: Path) -> str:
+    """Cópia somente-leitura de `source@ref`, sem `.git`: nem histórico nem commits futuros."""
+    _run(["git", "clone", "-q", source, str(dest)])
+    _run(["git", "checkout", "-q", "--detach", ref], cwd=dest)
+    sha = _run(["git", "rev-parse", "HEAD"], cwd=dest)
+    shutil.rmtree(dest / ".git")
+    for path in sorted(dest.rglob("*"), reverse=True):
+        if path.is_file():
+            path.chmod(0o444)
+    return sha
 
 
 def prepare_workspace(source: str, base_ref: str, runs_dir: Path, run_id: str) -> Workspace:

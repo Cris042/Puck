@@ -5,15 +5,14 @@ build-backend = "hatchling.build"
 [project]
 name = "atena-llm-benchmark"
 version = "0.1.0"
-description = "Benchmark de estratégias de LLM em engenharia de software com LangChain, LangGraph e LangSmith."
+description = "Puck: benchmark de metodologias de desenvolvimento assistido por LLM (LangGraph + LangSmith)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [{name = "Atena LLM Benchmark"}]
+authors = [{name = "Cristóvão Augusto"}]
 dependencies = [
   "langchain>=1.1.0",
   "langgraph>=1.0.0",
-  "langchain-openai>=1.4.1",
   "langchain-anthropic>=1.5.3",
   "langsmith>=0.4.0",
   "pydantic>=2.7.0",
@@ -24,6 +23,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Só para o juiz de outro provider (instrumento, não sujeito).
+judge-openai = [
+  "langchain-openai>=1.4.1"
+]
 dev = [
   "pytest>=8.0.0",
   "ruff>=0.6.0"

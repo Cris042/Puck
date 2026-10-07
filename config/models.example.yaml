@@ -1,37 +1,55 @@
-# Use IDs de modelo disponíveis na sua conta.
-# O benchmark não depende de nomes fixos: troque os IDs sem alterar o código.
-providers:
-  openai:
-    strong:
-      model: "gpt-5.5"
-      reasoning_effort: "medium"
-      temperature: 0
-    medium:
-      model: "gpt-5.4-mini"
-      reasoning_effort: "medium"
-      temperature: 0
-    weak:
-      model: "gpt-5.4-nano"
-      reasoning_effort: "low"
-      temperature: 0
+# Copie para config/models.yaml. Provider único dos sujeitos: Anthropic (protocolo, seção 1).
+#
+# Parâmetros de geração (protocolo, seção 3): Opus 5.5 e Sonnet 5.5 REJEITAM temperature, top_p e
+# top_k (HTTP 400) e não desligam o raciocínio; o controle é `effort` + `max_tokens`. Haiku 4.5
+# aceita amostragem e não aceita `effort`. O harness recusa sampling em modelo que não aceita.
+#
+# max_tokens ≤ 16000: chamadas sem streaming com teto maior estouram o timeout do SDK.
+provider: anthropic
 
-  anthropic:
-    strong:
-      model: "claude-opus-4-6"
-      reasoning_effort: "medium"
-      temperature: 0
-    medium:
-      model: "claude-sonnet-4-6"
-      reasoning_effort: "medium"
-      temperature: 0
-    weak:
-      model: "claude-haiku-4-5-20251001"
-      temperature: 0
+# M1 — Direta: agente único.
+m1:
+  agent:
+    model: claude-opus-5-5
+    effort: medium
+    max_tokens: 16000
 
-# Juiz fixo usado por `atena-bench evaluate`. Deve ser o MESMO em todas as execuções comparadas.
-# Para reduzir viés de autopreferência, use um provider diferente dos avaliados ou rode a
-# avaliação com dois juízes de providers diferentes e compare.
-judge:
-  provider: "anthropic"
-  model: "claude-opus-4-6"
+# M2 — Governada: tiers distintos por papel (strong / medium / weak). Decisão pendente P-08.
+m2:
+  architect:
+    model: claude-opus-5-5
+    effort: medium
+    max_tokens: 16000
+  reviewer:
+    model: claude-opus-5-5
+    effort: medium
+    max_tokens: 16000
+  planner:
+    model: claude-sonnet-5-5
+    effort: medium
+    max_tokens: 16000
+  implementer:
+    model: claude-haiku-4-5
+    max_tokens: 16000
+  repair:
+    model: claude-haiku-4-5
+    max_tokens: 16000
+
+# Telemetria: chamada separada, modelo fixo e barato, igual nas duas metodologias.
+telemetry:
+  model: claude-haiku-4-5
   temperature: 0
+  max_tokens: 8000
+
+# Juízes fixos da campanha (decisão D-03): um Claude calibrado + um de outro provider.
+# O juiz é instrumento, não sujeito. O de outro provider exige `pip install -e '.[judge-openai]'`.
+judges:
+  - name: claude
+    provider: anthropic
+    model: claude-opus-5-5
+    effort: high
+    max_tokens: 16000
+  - name: externo
+    provider: openai
+    model: DEFINIR_ANTES_DO_PILOTO   # decisão pendente P-06
+    max_tokens: 16000

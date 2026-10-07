@@ -1,0 +1,26 @@
+# Checks VISÍVEIS (PHP/Laravel): o agente roda via run_check; o harness roda no esqueleto e no final.
+# Chamam os alvos de make da base técnica (seção 7) dentro de uma imagem do HARNESS, nunca do
+# workspace: o compose do projeto é escrito pela LLM e não pode definir o próprio sandbox.
+# Imagem e rede com PostgreSQL efêmero: fase B do docs/PLANO.md. Até lá os checks saem
+# "unavailable" (125 = imagem ausente no docker run).
+checks:
+  lint:
+    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-laravel, make, lint]
+    timeout_seconds: 600
+    required: true
+    unavailable_exit_codes: [125, 127]
+  arch:
+    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-laravel, make, arch]
+    timeout_seconds: 300
+    required: true
+    unavailable_exit_codes: [125, 127]
+  test:
+    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-laravel, make, test]
+    timeout_seconds: 900
+    required: true
+    unavailable_exit_codes: [125, 127]
+  coverage:
+    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-laravel, make, coverage]
+    timeout_seconds: 900
+    required: false
+    unavailable_exit_codes: [125, 127]

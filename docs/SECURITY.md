@@ -11,10 +11,19 @@ O implementador não recebe um shell arbitrário. Ele pode manipular somente arq
 - `.env` ignorado pelo Git.
 
 ## Execução do código gerado
-Checks como PHPUnit executam código escrito pela LLM. Em `config/checks.atena.yaml` e
-`config/hidden-checks.atena.yaml` todos rodam em container com `--network none` e o workspace
-montado somente-leitura; nada do código gerado roda no host. Mantenha esse padrão ao adicionar
-checks.
+Checks executam código escrito pela LLM. Em `config/checks.<tech>.yaml` eles rodam em container
+com o workspace montado somente-leitura e imagem **do harness** (`puck-checks-<tech>`): o
+`compose.yaml` do projeto é escrito pela LLM e nunca define o próprio sandbox. Nada do código
+gerado roda no host. Mantenha esse padrão ao adicionar checks.
+
+## Legado
+O legado é exportado no SHA fixado **sem `.git`** (nem histórico nem commits posteriores, que
+incluem uma reescrita pública) e com arquivos somente-leitura. As ferramentas `legado_*` só leem,
+com `pathguard`.
+
+## Dados
+Somente dados sintéticos em prompts, seeds, testes e índice. O dump MariaDB de 2020 é versionado
+só como estrutura (`spec/legado/`), sem os INSERTs com dados pessoais.
 
 ## Isolamento do oráculo
 Checks ocultos e suas regras ficam fora do workspace (`{config_dir}`) e não são expostos às

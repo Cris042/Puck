@@ -8,29 +8,28 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
 from pydantic import ValidationError
 
-from .agents import AgentSuite
 from .checks import CheckRunner
 from .schemas import (
     ArchitecturePlan,
     CheckResult,
-    ExecutionReport,
     ReviewResult,
     RunError,
+    StepReport,
     TaskOutcome,
     TaskSpec,
+    TelemetryRecord,
 )
 
 
 class ExperimentState(TypedDict, total=False):
+    # Entrada montada pelo runner: requisitos + base técnica + tarefas (igual para M1 e M2).
+    brief: str
     requirements: str
-    architecture: str
-    security: str
-    fixed_tasks: list[TaskSpec]
+    documents: list[str]
     architecture_plan: ArchitecturePlan
     tasks: list[TaskSpec]
     task_index: int
-    current_report: ExecutionReport
-    execution_reports: list[ExecutionReport]
+    current_report: StepReport
     baseline_check_results: list[CheckResult]
     check_results: list[CheckResult]
     last_review: ReviewResult
@@ -40,6 +39,7 @@ class ExperimentState(TypedDict, total=False):
     tasks_completed: int
     task_outcomes: list[TaskOutcome]
     max_repair_cycles: int
+    telemetry: list[TelemetryRecord]
     errors: Annotated[list[RunError], operator.add]
     aborted: bool
 
@@ -56,8 +56,8 @@ def classify_error(stage: str, exc: Exception, task_id: str = "") -> RunError:
     )
 
 
-def _failed_report(error: RunError) -> ExecutionReport:
-    return ExecutionReport(status="failed", summary=f"Agente não concluiu: {error.message}")
+def _failed_step(error: RunError) -> StepReport:
+    return StepReport(status="failed", final_message=f"Agente não concluiu: {error.message}")
 
 
 def _failed_review(error: RunError) -> ReviewResult:
@@ -71,17 +71,61 @@ def _failed_review(error: RunError) -> ReviewResult:
     )
 
 
-def build_graph(agents: AgentSuite, checks: CheckRunner):
+def _run_step(agents, state: ExperimentState, *, stage: str, task_id: str, attempt: int, call):
+    """Executa uma etapa de escrita e a telemetria dela (chamada separada)."""
+    tree = agents.checkpoint()
+    errors: list[RunError] = []
+    try:
+        report = call()
+    except Exception as exc:
+        error = classify_error(stage, exc, task_id)
+        errors.append(error)
+        report = _failed_step(error)
+    record = agents.telemetry(
+        stage=stage,
+        task_id=task_id,
+        attempt=attempt,
+        needs_rework=None,
+        since_tree=tree,
+        step=report,
+        requirements=state["requirements"],
+    )
+    return report, record, errors
+
+
+def build_m1_graph(agents, checks: CheckRunner):
+    """M1 — direta: um agente, uma sessão, sem documentos, gates nem reparo."""
+    graph = StateGraph(ExperimentState)
+
+    def agent_node(state: ExperimentState):
+        report, record, errors = _run_step(
+            agents, state, stage="agent", task_id="M1", attempt=1,
+            call=lambda: agents.agent(state["brief"]),
+        )
+        return {"current_report": report, "telemetry": [record], "errors": errors}
+
+    def final_checks_node(state: ExperimentState):
+        # Medição do harness: o resultado não volta para o agente.
+        return {"check_results": checks.run_all()}
+
+    graph.add_node("agent", agent_node)
+    graph.add_node("final_checks", final_checks_node)
+    graph.add_edge(START, "agent")
+    graph.add_edge("agent", "final_checks")
+    graph.add_edge("final_checks", END)
+    return graph.compile()
+
+
+def build_m2_graph(agents, checks: CheckRunner):
+    """M2 — governada: Arquiteto → Planner → (Implementador → checks → Revisor → Reparo)* → final."""
     graph = StateGraph(ExperimentState)
 
     def architect_node(state: ExperimentState):
         try:
-            plan = agents.architect(
-                state["requirements"], state["architecture"], state["security"]
-            )
+            plan = agents.architect(state["brief"], state.get("documents", []))
         except Exception as exc:
             error = classify_error("architect", exc)
-            # Sem plano não há o que implementar de forma comparável: encerra com revisão final.
+            # Sem plano não há o que implementar: encerra com revisão final.
             return {
                 "architecture_plan": ArchitecturePlan(summary=f"Falha: {error.message}"),
                 "errors": [error],
@@ -92,41 +136,31 @@ def build_graph(agents: AgentSuite, checks: CheckRunner):
     def planner_node(state: ExperimentState):
         base = {
             "task_index": 0,
-            "execution_reports": [],
             "task_repair_cycle": 0,
             "total_repair_cycles": 0,
             "tasks_completed": 0,
             "task_outcomes": [],
+            "telemetry": [],
         }
         if state.get("aborted"):
             return {**base, "tasks": []}
-        if state.get("fixed_tasks"):
-            return {**base, "tasks": list(state["fixed_tasks"])}
         try:
-            planning = agents.planner(
-                state["requirements"], state["architecture"], state["architecture_plan"]
-            )
+            planning = agents.planner(state["brief"], state["architecture_plan"])
         except Exception as exc:
             return {**base, "tasks": [], "errors": [classify_error("planner", exc)]}
         return {**base, "tasks": planning.tasks}
 
     def implement_node(state: ExperimentState):
         task = state["tasks"][state["task_index"]]
-        errors = []
-        try:
-            report = agents.implement(
-                task,
-                state["architecture"],
-                state["security"],
-                state["architecture_plan"],
-            )
-        except Exception as exc:
-            error = classify_error("implement", exc, task.id)
-            errors.append(error)
-            report = _failed_report(error)
-        reports = list(state.get("execution_reports", []))
-        reports.append(report)
-        return {"current_report": report, "execution_reports": reports, "errors": errors}
+        report, record, errors = _run_step(
+            agents, state, stage="implement", task_id=task.id, attempt=1,
+            call=lambda: agents.implement(task, state["brief"], state["architecture_plan"]),
+        )
+        return {
+            "current_report": report,
+            "telemetry": [*state.get("telemetry", []), record],
+            "errors": errors,
+        }
 
     def validate_node(state: ExperimentState):
         return {"check_results": checks.run_all()}
@@ -137,41 +171,33 @@ def build_graph(agents: AgentSuite, checks: CheckRunner):
         try:
             review = agents.review(
                 task=task,
-                requirements=state["requirements"],
-                architecture=state["architecture"],
-                security=state["security"],
+                brief=state["brief"],
                 check_results=[x.model_dump() for x in state.get("check_results", [])],
                 baseline_check_results=[
                     x.model_dump() for x in state.get("baseline_check_results", [])
                 ],
-                implementation_report=state.get("current_report"),
             )
         except Exception as exc:
             error = classify_error("review", exc, task.id)
             errors.append(error)
             review = _failed_review(error)
-        return {"last_review": review, "errors": errors}
+        # needs_rework vem do harness (veredito do revisor), nunca do executor.
+        telemetry = list(state.get("telemetry", []))
+        if telemetry and telemetry[-1].task_id == task.id:
+            telemetry[-1] = telemetry[-1].model_copy(update={"needs_rework": not review.approved})
+        return {"last_review": review, "telemetry": telemetry, "errors": errors}
 
     def repair_node(state: ExperimentState):
         task = state["tasks"][state["task_index"]]
-        errors = []
-        try:
-            report = agents.repair(
-                task,
-                state["last_review"],
-                state["architecture"],
-                state["security"],
-            )
-        except Exception as exc:
-            error = classify_error("repair", exc, task.id)
-            errors.append(error)
-            report = _failed_report(error)
-        reports = list(state.get("execution_reports", []))
-        reports.append(report)
+        cycle = state.get("task_repair_cycle", 0) + 1
+        report, record, errors = _run_step(
+            agents, state, stage="repair", task_id=task.id, attempt=cycle + 1,
+            call=lambda: agents.repair(task, state["last_review"], state["brief"]),
+        )
         return {
             "current_report": report,
-            "execution_reports": reports,
-            "task_repair_cycle": state.get("task_repair_cycle", 0) + 1,
+            "telemetry": [*state.get("telemetry", []), record],
+            "task_repair_cycle": cycle,
             "total_repair_cycles": state.get("total_repair_cycles", 0) + 1,
             "errors": errors,
         }
@@ -203,14 +229,11 @@ def build_graph(agents: AgentSuite, checks: CheckRunner):
         try:
             review = agents.review(
                 task=None,
-                requirements=state["requirements"],
-                architecture=state["architecture"],
-                security=state["security"],
+                brief=state["brief"],
                 check_results=[x.model_dump() for x in final_checks],
                 baseline_check_results=[
                     x.model_dump() for x in state.get("baseline_check_results", [])
                 ],
-                implementation_report=None,
                 final=True,
             )
         except Exception as exc:
@@ -263,3 +286,7 @@ def build_graph(agents: AgentSuite, checks: CheckRunner):
     )
     graph.add_edge("final_review", END)
     return graph.compile()
+
+
+def build_graph(methodology: str, agents, checks: CheckRunner):
+    return build_m1_graph(agents, checks) if methodology == "m1" else build_m2_graph(agents, checks)

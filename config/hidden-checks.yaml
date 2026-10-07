@@ -1,0 +1,11 @@
+# Checks OCULTOS (oráculo): executados só pelo harness, no esqueleto e no final; nunca expostos
+# às ferramentas dos agentes nem aos prompts. Regras e suítes ficam fora do workspace
+# ({config_dir}), então a LLM não consegue lê-las.
+#
+# Preenchido nas fases C, D e F do docs/PLANO.md:
+#   characterization  suíte HTTP de caracterização (idêntica para as duas techs), parser phpunit/junit
+#   golden_rules      dataset dourado de regras de negócio
+#   semgrep           regras fixas por linguagem, parser semgrep_json
+#   deps_audit        composer audit / govulncheck
+#   fitness           analyzers por linguagem (lizard, jscpd, Deptrac/go-arch-lint)
+checks: {}

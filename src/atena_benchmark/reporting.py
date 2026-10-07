@@ -13,87 +13,53 @@ def save_summary(summary: ExperimentSummary, path: Path, git_stats: dict) -> Non
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def linkedin_report(summary: ExperimentSummary, git_stats: dict) -> str:
+def run_report(summary: ExperimentSummary, git_stats: dict) -> str:
+    """Resumo legível de UMA execução. Comparação entre células é feita por `compare`."""
     review = summary.final_review
-    verdict = "Aprovado na revisão final" if review and review.approved else "Com pendências"
-    checks_passed = sum(1 for c in summary.deterministic_checks if c.status == "passed")
-    checks_failed = sum(1 for c in summary.deterministic_checks if c.status == "failed")
-    new_check_failures = len(
-        status_changes(summary.baseline_checks, summary.deterministic_checks)["regressions"]
-    )
     hidden_changes = status_changes(summary.hidden_baseline_checks, summary.hidden_final_checks)
     hidden_counts = count_deltas(summary.hidden_baseline_checks, summary.hidden_final_checks)
     hidden_rows = "".join(
         f"| {check}: {key} | {before} → {after} |\n"
         for check, counts in hidden_counts.items()
         for key, (before, after) in counts.items()
-        if key not in {"scan_errors"}
+        if key != "scan_errors"
     )
-    validity = (
-        "Válida"
-        if summary.valid
-        else "**Inválida** (falha de infraestrutura; repita antes de comparar)"
-    )
-    architecture_violations = len(review.architecture_violations) if review else 0
-    security_findings = len(review.security_findings) if review else 0
-    overengineering_findings = len(review.overengineering_findings) if review else 0
-    requirement_gaps = len(review.requirements_gaps) if review else 0
-    return f"""# Benchmark de LLMs aplicado à Engenharia de Software
+    validity = "válida" if summary.valid else "**inválida** (falha de infraestrutura; repetir)"
+    shas = "".join(f"| {name} | `{sha[:12]}` |\n" for name, sha in summary.source_shas.items())
+    if summary.methodology == "m2":
+        verdict = "aprovado" if review and review.approved else "com pendências"
+        gates = f"| Tarefas aprovadas pelo revisor | {summary.tasks_completed}/{summary.tasks_total} |\n"
+        gates += f"| Ciclos de reparo | {summary.repair_cycles} |\n"
+        gates += f"| Revisão final | {verdict} |\n"
+    else:
+        gates = "| Gates | não se aplica (M1) |\n"
+    return f"""# Execução {summary.run_id}
 
-## Contexto
-Experimento: **{summary.experiment}**  
-Provider: **{summary.provider}**  
-Estratégia: **{summary.strategy}**  
-Governança: **{summary.governance}**  
-Commit base: `{summary.base_commit[:12]}`  
-Execução: {validity}
+Experimento **{summary.experiment}** · tech **{summary.tech}** · metodologia **{summary.methodology}** · {validity}
 
-O objetivo é avaliar custo e eficiência sem tratar o resultado como um ranking universal de modelos.
+## Origem
 
-## Resultados resumidos
+| Repositório | SHA |
+|---|---|
+{shas}
+## Custo e esforço
 
-| Indicador | Resultado |
+| Indicador | Valor |
 |---|---:|
-| Custo estimado de API | US$ {summary.total_cost_usd:.4f} |
-| Tokens de entrada | {summary.total_input_tokens:,} |
-| Tokens de saída | {summary.total_output_tokens:,} |
-| Tokens totais | {summary.total_tokens:,} |
-| Tarefas ({summary.task_source}) | {summary.tasks_total} |
-| Tarefas aprovadas | {summary.tasks_completed} |
-| Ciclos de correção | {summary.repair_cycles} |
-| Lacunas de requisitos | {requirement_gaps} |
-| Violações arquiteturais | {architecture_violations} |
-| Achados de segurança | {security_findings} |
-| Indícios de overengineering | {overengineering_findings} |
-| Checks aprovados | {checks_passed} |
-| Checks com falha | {checks_failed} |
-| Novas falhas vs. baseline | {new_check_failures} |
-| Regressões no oráculo oculto | {len(hidden_changes['regressions'])} |
-| Erros de agente/infra | {len(summary.errors)} |
-| Arquivos alterados | {git_stats.get('changed_files', 0)} |
-| Linhas adicionadas | {git_stats.get('additions', 0)} |
-| Linhas removidas | {git_stats.get('deletions', 0)} |
-| Revisão final | {verdict} |
+| Custo de execução (US$) | {summary.total_cost_usd:.4f} |
+| Tokens de execução (entrada / saída / cache lido) | {summary.total_input_tokens:,} / {summary.total_output_tokens:,} / {summary.total_cache_read_tokens:,} |
+| Tempo total (min) | {summary.total_duration_ms / 60_000:.1f} |
+| Custo de telemetria (US$, fora do custo de execução) | {summary.telemetry_cost_usd:.4f} |
+| Registros de telemetria / falhas de parse | {summary.telemetry_records} / {summary.telemetry_parse_failures} |
+{gates}| Erros (modelo + infra) | {len(summary.errors)} |
+| Arquivos alterados / linhas + / − | {git_stats.get('changed_files', 0)} / {git_stats.get('additions', 0)} / {git_stats.get('deletions', 0)} |
 
-## Oráculo oculto (baseline → final)
+## Oráculo oculto (esqueleto → final)
 
 | Contador | Valor |
 |---|---:|
 {hidden_rows or '| — | sem checks ocultos com parser |' + chr(10)}
-Contagens de regras estáticas são sinais, não prova de segurança ou de qualidade.
+Regressões no oráculo: {len(hidden_changes['regressions'])}.
 
-## Critérios observados
-- aderência aos requisitos;
-- aderência à arquitetura;
-- segurança;
-- regressões e retrabalho;
-- complexidade/overengineering;
-- consumo de tokens, tempo e custo.
-
-## Leitura dos resultados
-Este benchmark representa **um cenário específico**. Software é um sistema vivo e cada domínio possui prioridades, riscos e restrições próprias. Um modelo ou estratégia que se sair melhor aqui não é automaticamente superior em todos os projetos.
-
-Um sistema financeiro ou outro sistema crítico pode priorizar consistência, segurança, auditabilidade e tolerância a falhas. Uma rede social ou outro sistema menos crítico pode aceitar trade-offs diferentes em troca de velocidade, experimentação e custo.
-
-O objetivo, portanto, não é descobrir uma LLM vencedora, mas entender **quanto de capacidade, custo e complexidade cada problema realmente exige** e quais trade-offs aparecem em cada estratégia.
+Uma execução isolada não sustenta conclusão: o protocolo compara medianas por célula.
 """

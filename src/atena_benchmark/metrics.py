@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from time import perf_counter
 from typing import TypeVar
@@ -20,6 +21,8 @@ class MetricsRecorder:
         self.pricing = pricing
         self.invocations: list[InvocationMetric] = []
         self.output_file.parent.mkdir(parents=True, exist_ok=True)
+        # Arquivo sempre existe: vazio significa "nenhuma chamada", não "artefato perdido".
+        self.output_file.touch()
 
     @staticmethod
     def _normalize_usage(model: str, raw: dict) -> TokenUsage:
@@ -37,6 +40,9 @@ class MetricsRecorder:
             reasoning_tokens=int(output_details.get("reasoning", 0) or 0),
         )
 
+    def of_kind(self, kind: str) -> list[InvocationMetric]:
+        return [m for m in self.invocations if m.kind == kind]
+
     def unpriced_models(self) -> list[str]:
         return sorted(
             {u.model for m in self.invocations for u in m.usages if not u.priced_as}
@@ -46,7 +52,6 @@ class MetricsRecorder:
         self,
         *,
         role: str,
-        tier: str,
         run_name: str,
         tags: list[str],
         metadata: dict,
@@ -55,6 +60,7 @@ class MetricsRecorder:
         configured_model: str = "",
         task_id: str = "",
         recursion_limit: int | None = None,
+        kind: str = "execution",
     ) -> T:
         callback = UsageMetadataCallbackHandler()
         config = {
@@ -65,6 +71,8 @@ class MetricsRecorder:
         }
         if recursion_limit is not None:
             config["recursion_limit"] = recursion_limit
+        # Timestamp absoluto: latência de API varia com a carga do provider (protocolo, 4.1).
+        started_at = datetime.now(UTC).isoformat()
         start = perf_counter()
         error = ""
         try:
@@ -86,7 +94,9 @@ class MetricsRecorder:
             )
             metric = InvocationMetric(
                 role=role,
-                tier=tier,
+                kind=kind,
+                model=configured_model,
+                started_at=started_at,
                 duration_ms=duration_ms,
                 task_id=task_id,
                 usages=usages,

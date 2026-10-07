@@ -112,6 +112,57 @@ def build_read_tools(repo: Path, checks: CheckRunner):
     return [list_files, read_file, search_text, git_diff, git_status, run_check]
 
 
+def build_legacy_tools(legacy: Path):
+    """Acesso somente-leitura ao sistema legado no SHA fixado (sem `.git`, sem histórico futuro).
+
+    Contexto do legado idêntico em M1 e M2. Provisório: será substituído por
+    `buscar_contexto_legado` (RAG congelado) na etapa 4 do protocolo.
+    """
+
+    @tool
+    def legado_listar(pattern: str = "*") -> str:
+        """Lista arquivos do sistema LEGADO (somente leitura). Glob simples, ex.: '*.php'."""
+        files = [rel_s for _, rel_s in _iter_repo_files(legacy, pattern)]
+        listed = "\n".join(files[:MAX_LISTED_FILES])
+        if len(files) > MAX_LISTED_FILES:
+            listed += f"\n... truncado: {len(files)} arquivos; refine o padrão."
+        return listed or "Nenhum arquivo encontrado."
+
+    @tool
+    def legado_ler(path: str, start_line: int = 1, end_line: int = 400) -> str:
+        """Lê um intervalo de linhas de um arquivo do sistema LEGADO (somente leitura)."""
+        target = safe_repo_path(legacy, path)
+        if not target.is_file():
+            return f"Arquivo não encontrado no legado: {path}"
+        lines = target.read_text(encoding="utf-8", errors="replace").splitlines()
+        start = max(1, start_line)
+        end = max(start, end_line)
+        text = "\n".join(f"{i}: {lines[i-1]}" for i in range(start, min(end, len(lines)) + 1))
+        if len(text) > MAX_READ_CHARS:
+            text = text[:MAX_READ_CHARS] + "\n... truncado; leia um intervalo menor."
+        elif end < len(lines):
+            text += f"\n... arquivo tem {len(lines)} linhas."
+        return text
+
+    @tool
+    def legado_buscar(query: str, pattern: str = "*") -> str:
+        """Busca texto literal no sistema LEGADO e retorna até 200 ocorrências com arquivo:linha."""
+        matches: list[str] = []
+        for path, rel_s in _iter_repo_files(legacy, pattern):
+            try:
+                lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+            except OSError:
+                continue
+            for line_no, line in enumerate(lines, start=1):
+                if query in line:
+                    matches.append(f"{rel_s}:{line_no}: {line.strip()}")
+                    if len(matches) >= 200:
+                        return "\n".join(matches)
+        return "\n".join(matches) if matches else "Nenhuma ocorrência encontrada no legado."
+
+    return [legado_listar, legado_ler, legado_buscar]
+
+
 def build_write_tools(repo: Path, checks: CheckRunner):
     read_tools = build_read_tools(repo, checks)
 

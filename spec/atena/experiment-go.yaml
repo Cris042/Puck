@@ -1,0 +1,42 @@
+# Célula da campanha 1: tech = Go. A metodologia (m1 | m2) vem do comando:
+#   atena-bench run -e spec/atena/experiment-go.yaml -m m1
+# Tudo aqui é constante entre M1 e M2. Congelar (SHAs incluídos) antes da primeira execução.
+name: atena-fatia-vertical
+tech: go
+
+# Esqueleto mínimo fixo (fase B do docs/PLANO.md). Trocar a ref por SHA ao congelar.
+scaffold:
+  repository: scaffolds/go
+  ref: HEAD
+
+# Atena legado no commit fixado. Exportado sem .git para o workspace de cada execução.
+legacy:
+  repository: https://github.com/Cris042/Atena.git
+  ref: ac48dc552b817233547104a5d0acba932d41ab91
+
+# Só o SHA é registrado no summary.json. Trocar a ref por SHA ao congelar.
+references:
+  minerva:
+    repository: https://github.com/Cris042/Minerva.git
+    ref: HEAD
+  minervafinancas:
+    repository: https://github.com/Cris042/MinervaFinancas.git
+    ref: HEAD
+
+requirements_file: spec/atena/requisitos.md
+base_tecnica_file: spec/base-tecnica/BASE_TECNICA.md
+task_files:
+  - prompts/tarefas/refatoracao-banco.md
+context_files:
+  mer_der: docs/legado/MER_DER.md
+
+checks_file: config/checks.go.yaml
+hidden_checks_file: config/hidden-checks.yaml
+
+m2_governance_files:
+  - governance/m2/minerva.md
+m2_documents: [ADR, PRD, HLD, FDD]
+
+max_repair_cycles: 2
+max_agent_steps: 80
+m1_max_agent_steps: 400

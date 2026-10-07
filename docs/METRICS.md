@@ -1,63 +1,53 @@
 # Métricas
 
-## Coletadas pelo runtime
-- tokens de entrada;
-- tokens de saída;
-- tokens totais;
-- cache quando reportado pelo provider;
-- tempo por papel/etapa;
-- custo calculado pelo `pricing.yaml`;
-- número de chamadas;
-- número de ciclos de correção;
-- erros por etapa, classificados em `agent_step_limit`, `invalid_output` e `infra`.
+## Custo e esforço — `metrics.jsonl`, `summary.json`
 
-A LLM não estima essas métricas. O preço é localizado pelo nome devolvido pela API, depois pelo
-maior prefixo configurado (snapshots datados) e por fim pelo modelo do `models.yaml`. Modelos sem
-preço aparecem em `unpriced_models`; `run` recusa iniciar com preço ausente ou zerado, salvo
-`--allow-unpriced`.
+| Métrica | Fonte |
+|---|---|
+| Tokens de entrada, saída, cache lido e escrito, por chamada e papel | `UsageMetadataCallbackHandler` |
+| Tipo da chamada: `execution` (metodologia), `telemetry` e `judge` (instrumento) | harness |
+| Custo em USD | tokens × `pricing.yaml` (com `pricing_date`) |
+| Latência por chamada, com timestamp de início (UTC) | medição externa ao modelo |
+| Wall-clock da execução | harness |
+| Ciclos de reparo (M2) | harness |
 
-## Coletadas por Git
-- arquivos alterados/criados/removidos;
-- linhas adicionadas/removidas;
-- patch final.
+O custo e os tokens da metodologia (`total_cost_usd`, `total_tokens`) **excluem** telemetria e
+juiz, que aparecem em `telemetry_cost_usd` e em `evaluations/<juiz>-metrics.jsonl`. Preço é
+localizado pelo nome devolvido pela API, depois pelo maior prefixo configurado e por fim pelo
+modelo do `models.yaml`; `run` recusa iniciar com preço ausente ou zerado.
 
-## Checks determinísticos
-Status `passed`/`failed`/`unavailable`/`timeout` e, quando há `parser`, contagens comparáveis
-entre baseline e final (`semgrep_json` por regra, `phpunit` testes/falhas, `line_count`).
+## Telemetria — `telemetry.jsonl`
 
-Configuráveis em `checks.yaml`, por exemplo:
-- PHP lint;
-- PHPUnit;
-- PHPStan/Psalm;
-- Deptrac;
-- Semgrep;
-- Composer Audit.
+Uma entrada por etapa de escrita (agente da M1; implementação e reparo da M2), extraída por
+chamada separada do diff da etapa e do transcript:
 
-## Oráculo oculto
-Checks em `hidden_checks_file`, executados só pelo harness. No Atena: regras Semgrep locais de
-segurança e arquitetura e endpoints AJAX sem sessão. Métrica: contagem baseline → final por
-regra e checks que regrediram.
+- `declared_status`: o que o executor declarou (`STATUS:`);
+- por requisito: `validated` × `implemented` × `not_implemented`, com confiança `high | medium | low`;
+- testes executados e falhos; regressões possíveis **só** se houver teste executado;
+- violações de arquitetura, riscos, abstrações, dependências, sinais de overengineering, decisões.
 
-## Juiz independente (`atena-bench evaluate`)
+`attempt` e `needs_rework` são do harness. Falha de parse ou validação vira `parse_ok: false` e entra
+na taxa `telemetry_parse_failure_rate`.
+
+## Corretude e calibração — `compare`
+
+| Métrica | Definição |
+|---|---|
+| `hidden_regressions` | checks do oráculo que passavam no esqueleto e falham no final |
+| `false_success` | executor declarou `success` na última etapa e o oráculo regrediu ou um check obrigatório falhou |
+| contagens por check | `<check>.<contador>` no final (ex.: achados Semgrep por regra) |
+
+## Juízes — `evaluations/<juiz>.json`
+
 Notas 1–5 em requisitos, regressões, arquitetura, segurança, simplicidade e testes, mais achados
-`blocking`/`non_blocking` com evidência. Gravado em `artifacts/evaluation.json`.
+`blocking`/`non_blocking` com evidência. Colunas `judge.<juiz>.<dimensão>`.
 
-## Avaliação estruturada da LLM (dentro do workflow)
-- requisitos e regressões possíveis;
-- aderência arquitetural;
-- segurança;
-- overengineering;
-- justificativas de abstrações/dependências;
-- retrabalho.
+## Git
 
-## Agregação
-`atena-bench compare runs/* -o reports/campanha` gera `.md`, `.runs.csv` e `.groups.csv` com
-média ± desvio padrão por provider × estratégia × governança, excluindo execuções inválidas.
+Arquivos alterados, criados e removidos; linhas adicionadas e removidas; `changes.patch`.
 
-## Métricas derivadas recomendadas
-- custo / tarefa aprovada;
-- tokens / tarefa aprovada;
-- tempo / tarefa aprovada;
-- ciclos de correção / tarefa;
-- linhas adicionadas / requisito entregue (usar apenas como sinal, não como qualidade isolada);
-- abstrações sem justificativa / abstrações criadas.
+## A implementar (fases C–F do plano)
+
+Suíte de caracterização HTTP e dataset dourado; qualidade por linguagem (lizard, jscpd, Deptrac,
+go-arch-lint, PHPStan, staticcheck, cobertura); usabilidade (Playwright, KLM); carga (k6);
+segurança (Semgrep, ZAP, auditoria de dependências); catálogo de falhas por tipo.
