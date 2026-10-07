@@ -1,0 +1,23 @@
+# Desenvolvimento local (`make up`). O harness NÃO usa este arquivo: ele roda a aplicação na
+# própria imagem, com rede interna e PostgreSQL efêmero.
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: escola
+      POSTGRES_USER: escola
+      POSTGRES_PASSWORD: escola
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U escola"]
+      interval: 2s
+      retries: 30

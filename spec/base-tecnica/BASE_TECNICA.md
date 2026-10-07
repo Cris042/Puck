@@ -180,8 +180,9 @@ sem senha, token, CPF ou pepper.
 | Integração | `dao` contra PostgreSQL real (container) | sim | sim |
 | HTTP | `http` + `actor` ponta a ponta, autorização por perfil | sim | sim |
 
-- **Cobertura de linhas ✅:** ≥ 80% no projeto e ≥ 90% em `dominio` + `service`. Abaixo disso o
-  check falha.
+- **Cobertura de linhas ✅:** ≥ 80% no projeto e ≥ 90% em `dominio` + `service`, medida pelo
+  harness no relatório Cobertura (`build/coverage.xml`) gerado por `make coverage`. Em Go, o
+  relatório converte statements em linhas (`gocover-cobertura`).
 - Regra de média e situação coberta por **teste de tabela** com os casos-limite (nota vazia,
   recuperação maior e menor que a nota, média exatamente 60, menos de 4 bimestres, faltas acima do
   limite com média ≥ 60).
@@ -198,8 +199,9 @@ sem senha, token, CPF ou pepper.
 
 | Alvo | Faz |
 |---|---|
-| `make up` / `make down` | sobe e derruba app + banco |
+| `make up` / `make down` | sobe e derruba app + banco (desenvolvimento local) |
 | `make migrate` | aplica migrações |
+| `make run` | sobe o servidor HTTP em primeiro plano, na porta `$PORT` |
 | `make seed` | carrega dados sintéticos |
 | `make test` | todos os testes |
 | `make coverage` | testes com relatório de cobertura (Cobertura XML em `build/coverage.xml`) |
@@ -207,16 +209,22 @@ sem senha, token, CPF ou pepper.
 | `make arch` | conformidade de camadas |
 | `make audit` | vulnerabilidades de dependências |
 
+- **Ambiente que o harness injeta** (a aplicação não pode exigir outro): `DB_HOST`, `DB_PORT`,
+  `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (PostgreSQL), `APP_PASSWORD_PEPPER`,
+  `APP_PASSWORD_PEPPER_VERSION`, `PORT` e, no Laravel, `APP_KEY`. A aplicação sobe com
+  `make migrate && make run` e está pronta quando `GET /saude` responde 200.
+- Os checks rodam **sem internet**: toda dependência precisa estar declarada no `composer.lock` /
+  `go.sum`; não há download durante build ou teste.
 - Logs estruturados em JSON no stdout.
 - Dependência nova só com versão fixada e finalidade declarada no README do projeto.
 
 ## 8. Ferramentas
 
-Versões exatas congeladas no esqueleto de cada stack (fase B) e registradas no `input-snapshot/`.
+Versões congeladas em 2026-10-07: `composer.lock` / `go.sum` dos esqueletos (`scaffolds/`) e imagens de checks do harness (`docker/checks/`).
 
 | Finalidade | PHP / Laravel | Go | Comparável entre techs |
 |---|---|---|---|
-| Runtime / framework | PHP 8.4+ / Laravel (estável na data do congelamento) | Go (estável na data) + `net/http` da biblioteca padrão | — |
+| Runtime / framework | PHP 8.5.11 / Laravel 13 | Go 1.27.1 + `net/http` da biblioteca padrão | — |
 | Banco / driver | PostgreSQL / PDO via Query Builder **só em `dao`** | PostgreSQL / `pgx` | — |
 | Migrações | migrations do Laravel | `golang-migrate` (SQL) | — |
 | Senha | `password_hash(PASSWORD_ARGON2ID)` + `hash_hmac` | `golang.org/x/crypto/argon2` + `crypto/hmac` | sim (mesmos parâmetros) |
@@ -263,7 +271,8 @@ deptrac.yaml   phpstan.neon   Makefile   compose.yaml   Dockerfile
 ```
 
 Eloquent, se usado, fica restrito a `Dao/` e nunca sai dele; o domínio não estende classes do
-framework.
+framework nem depende de `Illuminate\*` (Deptrac). Interfaces de porta (`IBoletimDAO`) podem ficar
+em `Dao/`: o prefixo `I` as coloca na camada de aplicação.
 
 ## Anexo B — Estrutura de referência Go
 
@@ -278,4 +287,7 @@ migrations/   web/templates/
 .go-arch-lint.yml   Makefile   compose.yaml   Dockerfile
 ```
 
-Testes ao lado do código (`*_test.go`); integração com build tag `integracao`.
+Testes ao lado do código (`*_test.go`); integração com build tag `integracao` (o alvo `make test`
+a habilita). A interface do DAO é declarada no pacote consumidor (`actor`), idioma de Go; a
+implementação em `dao/` a satisfaz sem importá-la. `domain` e `application` não importam
+bibliotecas de terceiros (go-arch-lint, `depOnAnyVendor: false`).

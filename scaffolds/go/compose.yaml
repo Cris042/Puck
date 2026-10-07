@@ -1,0 +1,32 @@
+# Desenvolvimento local (`make up`). O harness NÃO usa este arquivo: ele roda a aplicação na
+# própria imagem, com rede interna e PostgreSQL efêmero.
+services:
+  migrar:
+    build: .
+    entrypoint: ["/app/migrar"]
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      migrar:
+        condition: service_completed_successfully
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: escola
+      POSTGRES_USER: escola
+      POSTGRES_PASSWORD: escola
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U escola"]
+      interval: 2s
+      retries: 30

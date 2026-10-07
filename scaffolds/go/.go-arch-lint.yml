@@ -1,0 +1,41 @@
+# Contrato de camadas da base técnica (seção 1.3), por função dentro de cada módulo:
+#   internal/<modulo>/{http,dto,actor,service,builder,dominio,dao,helper}/
+# Em Go a interface do DAO é declarada pelo consumidor (pacote actor); a implementação em dao/
+# a satisfaz sem importá-la. Domínio e aplicação não usam bibliotecas de terceiros.
+version: 3
+workdir: .
+allow:
+  depOnAnyVendor: false
+  # Esqueleto vazio: componentes ainda sem diretório não são erro.
+  ignoreNotFoundComponents: true
+
+components:
+  dominio:
+    in: [internal/*/dominio/**, internal/*/service/**]
+  aplicacao:
+    in: [internal/*/actor/**, internal/*/builder/**, internal/*/helper/**]
+  infraestrutura:
+    in: [internal/*/dao/**, internal/infra/**]
+  borda:
+    in: [internal/*/http/**, internal/*/dto/**]
+  comum:
+    in: internal/comum/**
+  cmd:
+    in: cmd/**
+
+# Qualquer componente pode usar `comum`; `comum` não depende de ninguém.
+commonComponents:
+  - comum
+
+deps:
+  aplicacao:
+    mayDependOn: [dominio]
+  infraestrutura:
+    mayDependOn: [aplicacao, dominio]
+    anyVendorDeps: true
+  borda:
+    mayDependOn: [aplicacao, dominio]
+    anyVendorDeps: true
+  cmd:
+    mayDependOn: [borda, aplicacao, infraestrutura, dominio]
+    anyVendorDeps: true

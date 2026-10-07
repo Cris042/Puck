@@ -4,10 +4,11 @@
 name: atena-fatia-vertical
 tech: laravel
 
-# Esqueleto mínimo fixo (fase B do docs/PLANO.md). Trocar a ref por SHA ao congelar.
+# Esqueleto mínimo fixo. Diretório copiado e commitado com autor/data fixos: o SHA é função só do
+# conteúdo. Conteúdo diferente deste SHA recusa a execução (esqueleto congelado).
 scaffold:
   repository: scaffolds/laravel
-  ref: HEAD
+  ref: 57e142beec26b29f3453e3ffe2b07d41cdbb4150
 
 # Atena legado no commit fixado. Exportado sem .git para o workspace de cada execução.
 legacy:

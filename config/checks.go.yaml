@@ -1,26 +1,23 @@
 # Checks VISÍVEIS (Go): o agente roda via run_check; o harness roda no esqueleto e no final.
-# Chamam os alvos de make da base técnica (seção 7) dentro de uma imagem do HARNESS, nunca do
-# workspace: o compose do projeto é escrito pela LLM e não pode definir o próprio sandbox.
-# Imagem e rede com PostgreSQL efêmero: fase B do docs/PLANO.md. Até lá os checks saem
-# "unavailable" (125 = imagem ausente no docker run).
+# Cada check chama um alvo de make da base técnica (seção 7) pelo sandbox do harness:
+# dependências baixadas sem executar código do projeto; execução sem internet, com PostgreSQL
+# efêmero em rede interna quando o alvo precisa de banco. Imagens: `atena-bench sandbox build-images`.
+# Exit 2 do sandbox = dependências do projeto não resolveram (falha do projeto).
 checks:
   lint:
-    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-go, make, lint]
+    command: ["{python}", -m, atena_benchmark, sandbox, check, --tech, go, --target, lint, --repo, "{repo_dir}"]
+    timeout_seconds: 900
+    required: true
+  arch:
+    command: ["{python}", -m, atena_benchmark, sandbox, check, --tech, go, --target, arch, --repo, "{repo_dir}"]
     timeout_seconds: 600
     required: true
-    unavailable_exit_codes: [125, 127]
-  arch:
-    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-go, make, arch]
-    timeout_seconds: 300
-    required: true
-    unavailable_exit_codes: [125, 127]
   test:
-    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-go, make, test]
-    timeout_seconds: 900
+    command: ["{python}", -m, atena_benchmark, sandbox, check, --tech, go, --target, test, --repo, "{repo_dir}"]
+    timeout_seconds: 1200
     required: true
-    unavailable_exit_codes: [125, 127]
   coverage:
-    command: [docker, run, --rm, --network, none, -v, "{repo_dir}:/app:ro", -w, /app, puck-checks-go, make, coverage]
-    timeout_seconds: 900
+    command: ["{python}", -m, atena_benchmark, sandbox, check, --tech, go, --target, coverage, --repo, "{repo_dir}"]
+    timeout_seconds: 1200
     required: false
-    unavailable_exit_codes: [125, 127]
+    parser: puck_metrics

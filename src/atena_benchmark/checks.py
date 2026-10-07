@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 from collections import Counter
 from pathlib import Path
 from time import perf_counter
@@ -35,6 +36,10 @@ def parse_counts(spec: CheckSpec, stdout: str, output: str) -> dict[str, int]:
             int(n) for n in re.findall(r"(?:Errors|Failures): (\d+)", rest)
         )
         return {"tests": int(match[1]), "assertions": int(match[2]), "failures": problems}
+    if spec.parser == "puck_metrics":
+        # Linhas `PUCK_METRIC <nome> <inteiro>` emitidas pelos comandos do sandbox.
+        found = re.findall(r"^PUCK_METRIC (\S+) (-?\d+)$", output, re.M)
+        return {name: int(value) for name, value in found}
     if spec.parser == "line_count":
         prefix = spec.line_prefix
         return {"total": sum(1 for line in output.splitlines() if line.startswith(prefix))}
@@ -44,8 +49,8 @@ def parse_counts(spec: CheckSpec, stdout: str, output: str) -> dict[str, int]:
 class CheckRunner:
     """Executa checks configurados pelo operador.
 
-    Os comandos aceitam os placeholders `{repo_dir}` (workspace da execução) e `{config_dir}`
-    (diretório do YAML de checks), úteis para montar volumes em `docker run`.
+    Os comandos aceitam os placeholders `{repo_dir}` (workspace da execução), `{config_dir}`
+    (diretório do YAML de checks) e `{python}` (interpretador do harness, para `-m atena_benchmark`).
     """
 
     def __init__(self, repo_dir: Path, config: ChecksConfig, config_dir: Path | None = None):
@@ -57,7 +62,11 @@ class CheckRunner:
         return sorted(self.config.checks)
 
     def _command(self, spec: CheckSpec) -> list[str]:
-        values = {"repo_dir": str(self.repo_dir.resolve()), "config_dir": str(self.config_dir)}
+        values = {
+            "repo_dir": str(self.repo_dir.resolve()),
+            "config_dir": str(self.config_dir),
+            "python": sys.executable,
+        }
         return [part.format(**values) for part in spec.command]
 
     def run(self, name: str) -> CheckResult:

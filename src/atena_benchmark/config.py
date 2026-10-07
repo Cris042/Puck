@@ -105,9 +105,10 @@ class CheckSpec(BaseModel):
     # Exit codes que significam "ferramenta/suíte ausente" e não falha do código avaliado.
     # 127 é o código do shell para "command not found".
     unavailable_exit_codes: list[int] = Field(default_factory=lambda: [127])
-    # Extrai contagens da saída para comparar baseline × final: "semgrep_json", "phpunit"
-    # ou "line_count" (uma ocorrência por linha que começa com `line_prefix`).
-    parser: Literal["semgrep_json", "phpunit", "line_count"] | None = None
+    # Extrai contagens da saída para comparar baseline × final: "semgrep_json", "phpunit",
+    # "line_count" (uma ocorrência por linha que começa com `line_prefix`) ou "puck_metrics"
+    # (linhas `PUCK_METRIC <nome> <inteiro>`).
+    parser: Literal["semgrep_json", "phpunit", "line_count", "puck_metrics"] | None = None
     line_prefix: str = ""
 
 

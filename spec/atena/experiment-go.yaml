@@ -4,10 +4,11 @@
 name: atena-fatia-vertical
 tech: go
 
-# Esqueleto mínimo fixo (fase B do docs/PLANO.md). Trocar a ref por SHA ao congelar.
+# Esqueleto mínimo fixo. Diretório copiado e commitado com autor/data fixos: o SHA é função só do
+# conteúdo. Conteúdo diferente deste SHA recusa a execução (esqueleto congelado).
 scaffold:
   repository: scaffolds/go
-  ref: HEAD
+  ref: 6d6efc7d9f2f57169db4bbcdfb09cc6911cd7045
 
 # Atena legado no commit fixado. Exportado sem .git para o workspace de cada execução.
 legacy:

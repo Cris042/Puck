@@ -1,0 +1,11 @@
+# Base técnica, seção 8: PHPStan no nível máximo + Larastan.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - app
+        - bootstrap/app.php
+        - database
+        - routes

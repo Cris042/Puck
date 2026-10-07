@@ -164,6 +164,31 @@ def evaluate(
             console.print(f"[green]✓[/green] {run_dir.name} / {spec.name}: {scores}")
 
 
+sandbox_app = typer.Typer(help="Execução isolada do código gerado (usado pelos checks).")
+app.add_typer(sandbox_app, name="sandbox")
+
+
+@sandbox_app.command("check")
+def sandbox_check(
+    tech: Annotated[str, typer.Option("--tech")],
+    target: Annotated[str, typer.Option("--target", help="Alvo de make da base técnica.")],
+    repo: Annotated[Path, typer.Option("--repo")],
+):
+    """Roda `make <target>` do projeto no sandbox; o exit code é o do make."""
+    from .sandbox import run_make_target
+
+    raise typer.Exit(run_make_target(tech, target, repo))
+
+
+@sandbox_app.command("build-images")
+def sandbox_build_images():
+    """Constrói as imagens de checks do harness que ainda não existirem."""
+    from .sandbox import ensure_images
+
+    built = ensure_images(Path(__file__).resolve().parents[2])
+    console.print(f"Construídas: {', '.join(built) or 'nenhuma (já existiam)'}")
+
+
 @app.command()
 def compare(
     run_dirs: Annotated[list[Path], typer.Argument(help="Diretórios runs/<run-id>.")],
