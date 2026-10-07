@@ -1,11 +1,11 @@
 # Checks OCULTOS (oráculo): executados só pelo harness, no esqueleto e no final; nunca expostos
-# às ferramentas dos agentes nem aos prompts. Regras e suítes ficam fora do workspace
-# ({config_dir}), então a LLM não consegue lê-las.
-#
-# Preenchido nas fases C, D e F do docs/PLANO.md:
-#   characterization  suíte HTTP de caracterização (idêntica para as duas techs), parser phpunit/junit
-#   golden_rules      dataset dourado de regras de negócio
-#   semgrep           regras fixas por linguagem, parser semgrep_json
-#   deps_audit        composer audit / govulncheck
-#   fitness           analyzers por linguagem (lizard, jscpd, Deptrac/go-arch-lint)
-checks: {}
+# às ferramentas dos agentes nem aos prompts. Suítes e dados ficam fora do workspace.
+# Parser puck_metrics: linhas `PUCK_METRIC <nome> <inteiro>`.
+checks:
+  # Caracterização HTTP: contrato + regra de notas comparada ao dataset dourado do legado.
+  # Exit 3 = a aplicação não subiu (falha do projeto).
+  caracterizacao:
+    command: ["{python}", -m, atena_benchmark, sandbox, oracle, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 1800
+    required: true
+    parser: puck_metrics

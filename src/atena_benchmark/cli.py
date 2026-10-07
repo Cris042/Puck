@@ -180,13 +180,87 @@ def sandbox_check(
     raise typer.Exit(run_make_target(tech, target, repo))
 
 
+@sandbox_app.command("oracle")
+def sandbox_oracle(
+    tech: Annotated[str, typer.Option("--tech")],
+    repo: Annotated[Path, typer.Option("--repo")],
+):
+    """Sobe a aplicação e roda o oráculo HTTP. Exit 3 = aplicação não subiu."""
+    from .sandbox import run_oracle
+
+    raise typer.Exit(run_oracle(tech, repo))
+
+
 @sandbox_app.command("build-images")
 def sandbox_build_images():
     """Constrói as imagens de checks do harness que ainda não existirem."""
     from .sandbox import ensure_images
 
-    built = ensure_images(Path(__file__).resolve().parents[2])
+    built = ensure_images()
     console.print(f"Construídas: {', '.join(built) or 'nenhuma (já existiam)'}")
+
+
+legado_app = typer.Typer(help="Sistema legado: dataset dourado e verificações (etapa 1).")
+app.add_typer(legado_app, name="legado")
+
+
+@legado_app.command("gerar-dourado")
+def legado_gerar_dourado(
+    atena: Annotated[str, typer.Option(help="Repositório do Atena (URL ou caminho).")] = (
+        "https://github.com/Cris042/Atena.git"
+    ),
+    ref: Annotated[str, typer.Option()] = "ac48dc552b817233547104a5d0acba932d41ab91",
+    saida: Annotated[Path, typer.Option()] = Path("oracle/dataset/notas-dourado.json"),
+):
+    """Executa o legado (PHP 7.3 + MariaDB) e grava o dataset dourado da regra de notas."""
+    from .legado import gerar_dourado
+
+    dataset = gerar_dourado(atena, ref, Path("oracle/legado/schema-fatia.sql"), saida)
+    console.print(f"{len(dataset['casos'])} casos, sha256 {dataset['casos_sha256']} → {saida}")
+
+
+@legado_app.command("contaminacao")
+def legado_contaminacao(
+    models: Annotated[Path, typer.Option("--models")] = Path("config/models.yaml"),
+    pricing: Annotated[Path, typer.Option("--pricing")] = Path("config/pricing.yaml"),
+    atena: Annotated[str, typer.Option()] = "https://github.com/Cris042/Atena.git",
+    ref: Annotated[str, typer.Option()] = "ac48dc552b817233547104a5d0acba932d41ab91",
+    repeticoes: Annotated[int, typer.Option()] = 3,
+    saida: Annotated[Path, typer.Option()] = Path("reports/contaminacao.json"),
+):
+    """Pergunta aos modelos-sujeitos, sem contexto, pelo código e pelo banco do Atena."""
+    import tempfile
+
+    from .contaminacao import avaliar, resumo
+    from .metrics import MetricsRecorder
+    from .models import build_chat_model
+    from .workspace import export_tree
+
+    model_cfg = load_models(models)
+    pricing_cfg = load_pricing(pricing)
+    specs = {spec.model: spec for spec in (model_cfg.m1.agent, *(s for _, s in model_cfg.m2))}
+    saida.parent.mkdir(parents=True, exist_ok=True)
+    metrics = MetricsRecorder(saida.with_suffix(".metrics.jsonl"), pricing_cfg)
+    relatorio = {"fonte": {"repositorio": atena, "ref": ref}, "modelos": {}}
+    with tempfile.TemporaryDirectory() as tmp:
+        legado = Path(tmp) / "atena"
+        relatorio["fonte"]["sha"] = export_tree(atena, ref, legado)
+        for nome, spec in specs.items():
+            model = build_chat_model(spec, model_cfg.provider)
+
+            def perguntar(prompt: str, model=model, nome=nome) -> str:
+                resposta = metrics.measured_invoke(
+                    role="contaminacao", kind="instrument", run_name="puck:contaminacao",
+                    tags=["puck", "contaminacao"], metadata={"model": nome},
+                    invoke=model.invoke, payload=prompt, configured_model=nome,
+                )
+                return resposta.text
+
+            resultados = avaliar(perguntar, legado, repeticoes)
+            relatorio["modelos"][nome] = {"resumo": resumo(resultados), "respostas": resultados}
+            console.print(f"{nome}: {resumo(resultados)}")
+    saida.write_text(json.dumps(relatorio, ensure_ascii=False, indent=2), encoding="utf-8")
+    console.print(f"Relatório: {saida}")
 
 
 @app.command()

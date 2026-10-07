@@ -26,6 +26,8 @@ references:
 
 requirements_file: spec/atena/requisitos.md
 base_tecnica_file: spec/base-tecnica/BASE_TECNICA.md
+spec_files:
+  - spec/atena/contrato-http.yaml
 task_files:
   - prompts/tarefas/refatoracao-banco.md
 context_files:

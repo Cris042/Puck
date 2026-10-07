@@ -280,6 +280,21 @@ Códigos de domínio observados: `notas.aprovado ∈ {0 cursando, 1 aprovado, 3 
 | D3 | `arquivo_privado` existe só no schema reconstruído | posterior ao commit fixado; ignorar |
 | D4 | `secretaria2.diretor` e `alunos2.matriculado` não aparecem em nenhuma query extraída | [inferido] colunas mortas ou usadas via `SELECT *` |
 | D5 | Dump 2020 × código 2024: modelos diferentes | dump não é usado para o oráculo |
+| D6 | Tipo real das colunas de `notas` em 2024 é desconhecido; no dump de 2020 `media` era `INT`, o que arredondaria 75,25 para 75 | o dataset dourado usa texto e guarda o valor calculado pelo PHP (pendência P-10) |
+
+## 6.1 Peculiaridades confirmadas executando o legado
+
+Obtidas pelo dataset dourado (`oracle/dataset/notas-dourado.json`), que roda o endpoint real
+`Models/ajax/CadastroNotas.php` em PHP 7.3 com casos sintéticos.
+
+| # | Comportamento | Tratamento na reescrita |
+|---|---|---|
+| L1 | Média ≥ 60 com 4 bimestres aprova **antes** de olhar faltas (B12, B25–B27) | preservar (oráculo) |
+| L2 | Nota vazia vale 0 na média e não conta na média parcial; nota `0` lançada conta (B10 × B11) | preservar (oráculo) |
+| L3 | Recuperação sem nota no bimestre é ignorada (B21) | preservar (oráculo) |
+| L4 | A carga horária usada é a da **primeira** disciplina do professor na turma, não a da disciplina lançada (`CadastroNotas.php:176-177`) | não reproduzir; o dourado usa uma disciplina por professor por turma |
+| L5 | A situação só é recalculada quando o professor salva as notas; faltas lançadas depois não mudam a situação gravada | não reproduzir; a situação reflete os dados atuais |
+| L6 | `UPDATE … cod_aluno = $aluno[$i]` sem aspas: matrícula não numérica gera erro de SQL | não reproduzir (é a injeção de SQL da linha 201) |
 
 ## 7. Como este documento foi produzido
 

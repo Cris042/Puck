@@ -144,8 +144,9 @@ class TokenUsage(BaseModel):
 
 class InvocationMetric(BaseModel):
     role: str
-    # execution entra no custo da metodologia; telemetry e judge são instrumento, medidos à parte.
-    kind: Literal["execution", "telemetry", "judge"] = "execution"
+    # execution entra no custo da metodologia; telemetry, judge e instrument (ex.: contaminação)
+    # são instrumento, medidos à parte.
+    kind: Literal["execution", "telemetry", "judge", "instrument"] = "execution"
     model: str = ""
     started_at: str = ""
     duration_ms: float

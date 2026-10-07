@@ -29,6 +29,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 POSTGRES_IMAGE = "postgres:18"
+ORACLE_IMAGE = "puck-oracle"
+ROOT = Path(__file__).resolve().parents[2]
 APP_PORT = 8080
 DB_TARGETS = {"test", "coverage", "migrate", "seed"}
 # Camadas cuja cobertura a base técnica exige ≥ 90% (seção 6).
@@ -156,6 +158,13 @@ class Stack:
     name: str = field(default_factory=lambda: f"puck-{uuid.uuid4().hex[:10]}")
     with_db: bool = True
     containers: list[str] = field(default_factory=list)
+    # Primeiro secretário (contrato HTTP): criado pela aplicação, usado pelo oráculo.
+    bootstrap: dict[str, str] = field(default_factory=lambda: {
+        "NOME": "Secretaria Inicial",
+        "EMAIL": f"secretaria.{secrets.token_hex(4)}@exemplo.test",
+        "MATRICULA": f"S{secrets.token_hex(4)}",
+        "SENHA": secrets.token_urlsafe(18),
+    })
 
     @property
     def network(self) -> str:
@@ -211,7 +220,9 @@ class Stack:
     def start_app(self, deps: str, timeout: int = 180) -> str:
         """Sobe a aplicação (`make migrate && make run`) e espera `GET /saude` responder 200."""
         spec = tech_spec(self.tech)
-        env = runtime_env(self.db_host) | {"APP_ENV": "production"}
+        env = runtime_env(self.db_host) | {"APP_ENV": "production"} | {
+            f"APP_BOOTSTRAP_{k}": v for k, v in self.bootstrap.items()
+        }
         script = (f"cp -a /app/. /work/ && cd /work && {spec.restore_command}"
                   " && make migrate && exec make run")
         self.containers.append(self.app_host)
@@ -320,7 +331,8 @@ def run_with_app(tech: str, repo: Path, image: str, command: list[str],
         except AppStartError as exc:
             print(f"Aplicação não subiu:\n{exc}")
             return 3
-        env = {"TARGET_URL": url, **(extra_env or {})}
+        env = {"TARGET_URL": url, **{f"PUCK_BOOTSTRAP_{k}": v for k, v in current.bootstrap.items()},
+               **(extra_env or {})}
         volumes = [arg for mount in (mounts or []) for arg in ("-v", mount)]
         completed = subprocess.run(
             ["docker", "run", "--rm", "--network", current.network, *_env_args(env), *volumes,
@@ -331,12 +343,24 @@ def run_with_app(tech: str, repo: Path, image: str, command: list[str],
         return completed.returncode
 
 
-def ensure_images(root: Path) -> list[str]:
+def run_oracle(tech: str, repo: Path) -> int:
+    """Suíte de caracterização HTTP (oracle/suite) contra a aplicação no sandbox."""
+    mounts = [f"{ROOT / 'oracle' / 'suite'}:/oracle/suite:ro",
+              f"{ROOT / 'oracle' / 'dataset'}:/oracle/dataset:ro"]
+    return run_with_app(tech, repo, ORACLE_IMAGE, [], mounts=mounts)
+
+
+HARNESS_IMAGES = {
+    **{spec.image: Path("docker") / "checks" / tech for tech, spec in TECHS.items()},
+    ORACLE_IMAGE: Path("oracle"),
+}
+
+
+def ensure_images(root: Path = ROOT) -> list[str]:
     """Constrói as imagens do harness que faltarem. Devolve as construídas."""
     built = []
-    for tech, spec in TECHS.items():
-        if _docker("image", "inspect", spec.image, check=False).returncode != 0:
-            _docker("build", "-q", "-t", spec.image, str(root / "docker" / "checks" / tech),
-                    timeout=1800)
-            built.append(spec.image)
+    for image, context in HARNESS_IMAGES.items():
+        if _docker("image", "inspect", image, check=False).returncode != 0:
+            _docker("build", "-q", "-t", image, str(root / context), timeout=1800)
+            built.append(image)
     return built

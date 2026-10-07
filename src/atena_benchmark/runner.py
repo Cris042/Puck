@@ -63,6 +63,10 @@ def build_brief(experiment: ExperimentConfig, requirements: str) -> str:
     values = {"tech": experiment.tech, "requisitos": requirements}
     values |= {key: _read(path) for key, path in experiment.context_files.items()}
     tasks = "\n\n---\n\n".join(render(_read(path), values) for path in experiment.task_files)
+    annexes = "".join(
+        f"\n## {Path(path).name}\n\n```{Path(path).suffix.lstrip('.')}\n{_read(path).strip()}\n```\n"
+        for path in experiment.spec_files
+    )
     return f"""# REQUISITOS
 
 {requirements}
@@ -70,6 +74,9 @@ def build_brief(experiment: ExperimentConfig, requirements: str) -> str:
 # BASE TÉCNICA OBRIGATÓRIA
 
 {_read(experiment.base_tecnica_file)}
+
+# ANEXOS OBRIGATÓRIOS
+{annexes or chr(10) + "Nenhum."}
 
 # TAREFAS
 
@@ -113,6 +120,8 @@ def _snapshot_files(
         if experiment.hidden_checks_file
         else None,
     }
+    for path in experiment.spec_files:
+        files[f"spec/{Path(path).name}"] = Path(path)
     for path in experiment.task_files:
         files[f"tasks/{Path(path).name}"] = Path(path)
     for key, path in experiment.context_files.items():
@@ -169,12 +178,14 @@ def run_experiment(
     (workspace.artifacts_dir / "input-snapshot" / "brief.md").write_text(brief, encoding="utf-8")
 
     model_registry = ModelRegistry(models_config, methodology)
-    check_runner = CheckRunner(workspace.repo_dir, checks, checks_path.parent)
+    placeholders = {"tech": experiment.tech}
+    check_runner = CheckRunner(workspace.repo_dir, checks, checks_path.parent, placeholders)
     # Runner separado e nunca entregue às ferramentas dos agentes: é o oráculo da execução.
     hidden_runner = CheckRunner(
         workspace.repo_dir,
         hidden_checks,
         hidden_checks_path.parent if hidden_checks_path else None,
+        placeholders,
     )
     metrics = MetricsRecorder(workspace.artifacts_dir / "metrics.jsonl", pricing)
     agents = AgentSuite(

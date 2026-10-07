@@ -50,13 +50,22 @@ class CheckRunner:
     """Executa checks configurados pelo operador.
 
     Os comandos aceitam os placeholders `{repo_dir}` (workspace da execução), `{config_dir}`
-    (diretório do YAML de checks) e `{python}` (interpretador do harness, para `-m atena_benchmark`).
+    (diretório do YAML de checks), `{python}` (interpretador do harness, para `-m atena_benchmark`)
+    e os valores extras recebidos (ex.: `{tech}`).
     """
 
-    def __init__(self, repo_dir: Path, config: ChecksConfig, config_dir: Path | None = None):
+    def __init__(
+        self,
+        repo_dir: Path,
+        config: ChecksConfig,
+        config_dir: Path | None = None,
+        values: dict[str, str] | None = None,
+    ):
         self.repo_dir = repo_dir
         self.config = config
         self.config_dir = (config_dir or Path.cwd()).resolve()
+        # Placeholders extras do experimento (ex.: {tech}).
+        self.values = values or {}
 
     def names(self) -> list[str]:
         return sorted(self.config.checks)
@@ -66,6 +75,7 @@ class CheckRunner:
             "repo_dir": str(self.repo_dir.resolve()),
             "config_dir": str(self.config_dir),
             "python": sys.executable,
+            **self.values,
         }
         return [part.format(**values) for part in spec.command]
 

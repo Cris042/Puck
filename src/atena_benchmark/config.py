@@ -134,6 +134,8 @@ class ExperimentConfig(BaseModel):
     requirements_file: str
     # Base técnica comum (constante entre células) e tarefas entregues às duas metodologias.
     base_tecnica_file: str
+    # Anexos normativos entregues na íntegra (ex.: contrato HTTP em OpenAPI).
+    spec_files: list[str] = Field(default_factory=list)
     task_files: list[str] = Field(default_factory=list)
     # Arquivos que preenchem placeholders `{nome}` nas tarefas (ex.: mer_der).
     context_files: dict[str, str] = Field(default_factory=dict)

@@ -69,6 +69,7 @@ def test_experiments_reference_existing_files(path: Path):
         experiment.base_tecnica_file,
         experiment.checks_file,
         experiment.hidden_checks_file,
+        *experiment.spec_files,
         *experiment.task_files,
         *experiment.context_files.values(),
         *experiment.m2_governance_files,

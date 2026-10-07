@@ -12,6 +12,9 @@ por bimestre, cálculo de média e decisão de aprovação, com autenticação e
 
 ## Requisitos funcionais
 
+A API JSON de `contrato-http.yaml` (anexo) é obrigatória e é o que a verificação automática
+exercita; a interface web é livre.
+
 | Id | Requisito | Fonte no legado |
 |---|---|---|
 | RF-01 | Usuário entra informando e-mail, matrícula e senha; o sistema identifica o perfil. Credenciais inválidas recebem uma resposta única, sem dizer qual campo errou. | `Models/HomeMolde.php:13-71` |
@@ -23,7 +26,7 @@ por bimestre, cálculo de média e decisão de aprovação, com autenticação e
 | RF-07 | Professor registra faltas por aluno, disciplina e data. | `Models/ajax/EnviarAlaiacao.php:890-900` |
 | RF-08 | O sistema calcula nota efetiva, média, média parcial e situação de cada aluno em cada disciplina, **exatamente** pela regra do legado (seção "Regra de notas"). | `Models/ajax/CadastroNotas.php:55-198` |
 | RF-09 | Aluno consulta suas notas, médias e situação por disciplina (boletim). | `Views/pages/boletim-aluno.php` |
-| RF-10 | Professor e secretário consultam o boletim de uma turma. | `Views/pages/boletim.php`, `Views/pages/boletim-adm.php` |
+| RF-10 | Professor (das próprias disciplinas) e secretário consultam o boletim de uma disciplina da turma. | `Views/pages/boletim.php`, `Views/pages/boletim-adm.php` |
 | RF-11 | O banco legado da fatia é migrado para o modelo novo sem perda silenciosa (tarefa de refatoração do banco). | `docs/legado/MER_DER.md` |
 
 ## Regra de notas (preservar, inclusive o que parece errado)
@@ -42,14 +45,18 @@ por bimestre, cálculo de média e decisão de aprovação, com autenticação e
 A ordem faz um aluno com média ≥ 60 nunca ser reprovado por faltas. Divergências com a regra
 "esperada" são registradas, não corrigidas.
 
+Comportamentos do legado **não** reproduzidos (registrados em `docs/legado/MER_DER.md`): a carga
+horária lida da primeira disciplina do professor na turma, em vez da disciplina lançada; e a
+situação gravada só no momento do lançamento das notas (aqui ela reflete as faltas atuais).
+
 ## Autorização (matriz)
 
 | Ação | Aluno | Professor | Secretário |
 |---|---|---|---|
 | Cadastros (RF-02, RF-03) e matrícula (RF-04), prazos (RF-05) | — | — | sim |
-| Lançar notas e faltas (RF-06, RF-07) | — | só nas próprias disciplinas, dentro do prazo | — |
+| Lançar notas e faltas (RF-06, RF-07) | — | só nas próprias disciplinas | — |
 | Ver o próprio boletim (RF-09) | sim | — | — |
-| Ver boletim de turma (RF-10) | — | só turmas em que leciona | sim |
+| Ver boletim de disciplina (RF-10) | — | só das próprias disciplinas | sim |
 
 Acesso negado responde 403 e não produz efeito colateral.
 

@@ -1,0 +1,5535 @@
+{
+  "casos": [
+    {
+      "carga_horaria": 80,
+      "descricao": "4 bimestres, média ≥ 60",
+      "esperado": {
+        "media": 75.0,
+        "media_parcial": 75.0,
+        "notas_gravadas": [
+          "70",
+          "80",
+          "90",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B01",
+      "notas": [
+        "70",
+        "80",
+        "90",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "média exatamente 60",
+      "esperado": {
+        "media": 60.0,
+        "media_parcial": 60.0,
+        "notas_gravadas": [
+          "60",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B02",
+      "notas": [
+        "60",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "média 59,75 com 4 bimestres",
+      "esperado": {
+        "media": 59.75,
+        "media_parcial": 59.75,
+        "notas_gravadas": [
+          "59",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "B03",
+      "notas": [
+        "59",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "rec > nota < 60 substitui",
+      "esperado": {
+        "media": 73.75,
+        "media_parcial": 73.75,
+        "notas_gravadas": [
+          "40",
+          "80",
+          "80",
+          "80"
+        ],
+        "recuperacoes_gravadas": [
+          "55",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B04",
+      "notas": [
+        "40",
+        "80",
+        "80",
+        "80"
+      ],
+      "recuperacoes": [
+        "55",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "rec < nota não substitui",
+      "esperado": {
+        "media": 70.0,
+        "media_parcial": 70.0,
+        "notas_gravadas": [
+          "40",
+          "80",
+          "80",
+          "80"
+        ],
+        "recuperacoes_gravadas": [
+          "30",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B05",
+      "notas": [
+        "40",
+        "80",
+        "80",
+        "80"
+      ],
+      "recuperacoes": [
+        "30",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "rec acima de 60 é limitada a 60",
+      "esperado": {
+        "media": 75.0,
+        "media_parcial": 75.0,
+        "notas_gravadas": [
+          "40",
+          "80",
+          "80",
+          "80"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B06",
+      "notas": [
+        "40",
+        "80",
+        "80",
+        "80"
+      ],
+      "recuperacoes": [
+        "95",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "nota acima de 100 é limitada a 100",
+      "esperado": {
+        "media": 62.5,
+        "media_parcial": 62.5,
+        "notas_gravadas": [
+          "100",
+          "50",
+          "50",
+          "50"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B07",
+      "notas": [
+        "150",
+        "50",
+        "50",
+        "50"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "nota ≥ 60 ignora rec",
+      "esperado": {
+        "media": 60.0,
+        "media_parcial": 60.0,
+        "notas_gravadas": [
+          "60",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "60",
+          "60",
+          "60"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B08",
+      "notas": [
+        "60",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        "90",
+        "90",
+        "90",
+        "90"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "2 bimestres: cursando",
+      "esperado": {
+        "media": 37.5,
+        "media_parcial": 75.0,
+        "notas_gravadas": [
+          "70",
+          "80",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "B09",
+      "notas": [
+        "70",
+        "80",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "nada lançado",
+      "esperado": {
+        "media": 0.0,
+        "media_parcial": 0.0,
+        "notas_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "B10",
+      "notas": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "zero lançado ≠ vazio",
+      "esperado": {
+        "media": 0.0,
+        "media_parcial": 0.0,
+        "notas_gravadas": [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "B11",
+      "notas": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas acima com média ≥ 60: aprova",
+      "esperado": {
+        "media": 70.0,
+        "media_parcial": 70.0,
+        "notas_gravadas": [
+          "70",
+          "70",
+          "70",
+          "70"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        70
+      ],
+      "id": "B12",
+      "notas": [
+        "70",
+        "70",
+        "70",
+        "70"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas acima com média < 60",
+      "esperado": {
+        "media": 40.0,
+        "media_parcial": 40.0,
+        "notas_gravadas": [
+          "40",
+          "40",
+          "40",
+          "40"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        70
+      ],
+      "id": "B13",
+      "notas": [
+        "40",
+        "40",
+        "40",
+        "40"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas acima, 2 bimestres",
+      "esperado": {
+        "media": 20.0,
+        "media_parcial": 40.0,
+        "notas_gravadas": [
+          "40",
+          "40",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        70
+      ],
+      "id": "B14",
+      "notas": [
+        "40",
+        "40",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "65 faltas: abaixo do limite",
+      "esperado": {
+        "media": 20.0,
+        "media_parcial": 40.0,
+        "notas_gravadas": [
+          "40",
+          "40",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        65
+      ],
+      "id": "B15",
+      "notas": [
+        "40",
+        "40",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "66 faltas: acima do limite",
+      "esperado": {
+        "media": 20.0,
+        "media_parcial": 40.0,
+        "notas_gravadas": [
+          "40",
+          "40",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        66
+      ],
+      "id": "B16",
+      "notas": [
+        "40",
+        "40",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas somadas de 3 registros",
+      "esperado": {
+        "media": 10.0,
+        "media_parcial": 40.0,
+        "notas_gravadas": [
+          "40",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        30,
+        20,
+        16
+      ],
+      "id": "B17",
+      "notas": [
+        "40",
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "nota decimal com rec",
+      "esperado": {
+        "media": 60.0,
+        "media_parcial": 60.0,
+        "notas_gravadas": [
+          "59.5",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "B18",
+      "notas": [
+        "59.5",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        "60",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "média parcial não inteira",
+      "esperado": {
+        "media": 25.0,
+        "media_parcial": 33.333333333333,
+        "notas_gravadas": [
+          "33",
+          "33",
+          "34",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "B19",
+      "notas": [
+        "33",
+        "33",
+        "34",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "bimestres alternados",
+      "esperado": {
+        "media": 39.75,
+        "media_parcial": 79.5,
+        "notas_gravadas": [
+          "",
+          "100",
+          "",
+          "20"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "59"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "B20",
+      "notas": [
+        null,
+        "100",
+        null,
+        "20"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "59"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "rec sem nota é ignorada",
+      "esperado": {
+        "media": 0.0,
+        "media_parcial": 0.0,
+        "notas_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "50",
+          "50",
+          "50",
+          "50"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "B21",
+      "notas": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        "50",
+        "50",
+        "50",
+        "50"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "CH 40: 33 faltas acima do limite",
+      "esperado": {
+        "media": 7.5,
+        "media_parcial": 30.0,
+        "notas_gravadas": [
+          "30",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        33
+      ],
+      "id": "B22",
+      "notas": [
+        "30",
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "CH 40: 32 faltas abaixo do limite",
+      "esperado": {
+        "media": 7.5,
+        "media_parcial": 30.0,
+        "notas_gravadas": [
+          "30",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        32
+      ],
+      "id": "B23",
+      "notas": [
+        "30",
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "CH 120: 99 faltas, média < 60",
+      "esperado": {
+        "media": 30.0,
+        "media_parcial": 30.0,
+        "notas_gravadas": [
+          "30",
+          "30",
+          "30",
+          "30"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        99
+      ],
+      "id": "B24",
+      "notas": [
+        "30",
+        "30",
+        "30",
+        "30"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas acima, média exatamente 60: aprova",
+      "esperado": {
+        "media": 60.0,
+        "media_parcial": 60.0,
+        "notas_gravadas": [
+          "60",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        70
+      ],
+      "id": "B25",
+      "notas": [
+        "60",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "CH 40, 40 faltas, média 85: aprova",
+      "esperado": {
+        "media": 85.0,
+        "media_parcial": 85.0,
+        "notas_gravadas": [
+          "100",
+          "90",
+          "80",
+          "70"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        40
+      ],
+      "id": "B26",
+      "notas": [
+        "100",
+        "90",
+        "80",
+        "70"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "rec leva a média a 67,5 com faltas acima",
+      "esperado": {
+        "media": 67.5,
+        "media_parcial": 67.5,
+        "notas_gravadas": [
+          "50",
+          "70",
+          "70",
+          "70"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        150
+      ],
+      "id": "B27",
+      "notas": [
+        "50",
+        "70",
+        "70",
+        "70"
+      ],
+      "recuperacoes": [
+        "60",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "faltas acima, média 59,75: reprova por faltas",
+      "esperado": {
+        "media": 59.75,
+        "media_parcial": 59.75,
+        "notas_gravadas": [
+          "59",
+          "60",
+          "60",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        70
+      ],
+      "id": "B28",
+      "notas": [
+        "59",
+        "60",
+        "60",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 53.0,
+        "media_parcial": 53.0,
+        "notas_gravadas": [
+          "13",
+          "76",
+          "53",
+          "70"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        32
+      ],
+      "id": "A001",
+      "notas": [
+        "13",
+        "76",
+        "53",
+        "70"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 29.75,
+        "media_parcial": 59.5,
+        "notas_gravadas": [
+          "",
+          "57",
+          "",
+          "62"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "45",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        10
+      ],
+      "id": "A002",
+      "notas": [
+        null,
+        "57",
+        null,
+        "62"
+      ],
+      "recuperacoes": [
+        null,
+        "45",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 49.75,
+        "media_parcial": 49.75,
+        "notas_gravadas": [
+          "11",
+          "37",
+          "18",
+          "90"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "47",
+          "51",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A003",
+      "notas": [
+        "11",
+        "37",
+        "18",
+        "90"
+      ],
+      "recuperacoes": [
+        null,
+        "47",
+        "51",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 64.75,
+        "media_parcial": 64.75,
+        "notas_gravadas": [
+          "100",
+          "76",
+          "50",
+          "33"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        14
+      ],
+      "id": "A004",
+      "notas": [
+        "102",
+        "76",
+        "50",
+        "33"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 58.75,
+        "media_parcial": 78.333333333333,
+        "notas_gravadas": [
+          "90",
+          "85",
+          "",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "15",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        8
+      ],
+      "id": "A005",
+      "notas": [
+        "90",
+        "85",
+        null,
+        "60"
+      ],
+      "recuperacoes": [
+        "15",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 58.25,
+        "media_parcial": 58.25,
+        "notas_gravadas": [
+          "39",
+          "82",
+          "61",
+          "51"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "4",
+          "58",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        51
+      ],
+      "id": "A006",
+      "notas": [
+        "39",
+        "82",
+        "61",
+        "51"
+      ],
+      "recuperacoes": [
+        null,
+        "4",
+        "58",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 86.0,
+        "media_parcial": 86.0,
+        "notas_gravadas": [
+          "62",
+          "98",
+          "100",
+          "84"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "12",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        25
+      ],
+      "id": "A007",
+      "notas": [
+        "62",
+        "98",
+        "103",
+        "84"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "12",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 47.75,
+        "media_parcial": 47.75,
+        "notas_gravadas": [
+          "57",
+          "23",
+          "100",
+          "8"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "42.1",
+          "11"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A008",
+      "notas": [
+        "57",
+        "23",
+        "107",
+        "8"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "42.1",
+        "11"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 32.25,
+        "media_parcial": 32.25,
+        "notas_gravadas": [
+          "10",
+          "25",
+          "9.1",
+          "34"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "60",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        34
+      ],
+      "id": "A009",
+      "notas": [
+        "10",
+        "25",
+        "9.1",
+        "34"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "74",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 48.45,
+        "media_parcial": 48.45,
+        "notas_gravadas": [
+          "69",
+          "26.8",
+          "88",
+          "10"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A010",
+      "notas": [
+        "69",
+        "26.8",
+        "88",
+        "10"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 12.0,
+        "media_parcial": 48.0,
+        "notas_gravadas": [
+          "",
+          "48",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "45",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        103
+      ],
+      "id": "A011",
+      "notas": [
+        null,
+        "48",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        "45",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 57.75,
+        "media_parcial": 57.75,
+        "notas_gravadas": [
+          "57",
+          "15",
+          "59",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "26",
+          "",
+          "8",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        20
+      ],
+      "id": "A012",
+      "notas": [
+        "57",
+        "15",
+        "59",
+        "103"
+      ],
+      "recuperacoes": [
+        "26",
+        null,
+        "8",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 45.5,
+        "media_parcial": 91.0,
+        "notas_gravadas": [
+          "",
+          "100",
+          "",
+          "82"
+        ],
+        "recuperacoes_gravadas": [
+          "2",
+          "60",
+          "",
+          "23"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        11
+      ],
+      "id": "A013",
+      "notas": [
+        null,
+        "107",
+        null,
+        "82"
+      ],
+      "recuperacoes": [
+        "2",
+        "66",
+        null,
+        "23"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 48.775,
+        "media_parcial": 48.775,
+        "notas_gravadas": [
+          "10",
+          "23",
+          "33",
+          "99"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "53.1",
+          "",
+          "35"
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        68
+      ],
+      "id": "A014",
+      "notas": [
+        "10",
+        "23",
+        "33",
+        "99"
+      ],
+      "recuperacoes": [
+        null,
+        "53.1",
+        null,
+        "35"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 67.5,
+        "media_parcial": 67.5,
+        "notas_gravadas": [
+          "19",
+          "82",
+          "69",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "60"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A015",
+      "notas": [
+        "19",
+        "82",
+        "69",
+        "108"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "68"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 59.5,
+        "media_parcial": 59.5,
+        "notas_gravadas": [
+          "72",
+          "72",
+          "34",
+          "16"
+        ],
+        "recuperacoes_gravadas": [
+          "55",
+          "45",
+          "",
+          "60"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        17
+      ],
+      "id": "A016",
+      "notas": [
+        "72",
+        "72",
+        "34",
+        "16"
+      ],
+      "recuperacoes": [
+        "55",
+        "45",
+        null,
+        "64"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 47.85,
+        "media_parcial": 63.8,
+        "notas_gravadas": [
+          "40",
+          "52.4",
+          "",
+          "99"
+        ],
+        "recuperacoes_gravadas": [
+          "7",
+          "",
+          "60",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        8
+      ],
+      "id": "A017",
+      "notas": [
+        "40",
+        "52.4",
+        null,
+        "99"
+      ],
+      "recuperacoes": [
+        "7",
+        null,
+        "73",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 50.75,
+        "media_parcial": 50.75,
+        "notas_gravadas": [
+          "83",
+          "4",
+          "40",
+          "76"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        58
+      ],
+      "id": "A018",
+      "notas": [
+        "83",
+        "4",
+        "40",
+        "76"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 61.5,
+        "media_parcial": 61.5,
+        "notas_gravadas": [
+          "49",
+          "100",
+          "94",
+          "3"
+        ],
+        "recuperacoes_gravadas": [
+          "15",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A019",
+      "notas": [
+        "49",
+        "104",
+        "94",
+        "3"
+      ],
+      "recuperacoes": [
+        "15",
+        "74",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 20.75,
+        "media_parcial": 41.5,
+        "notas_gravadas": [
+          "14",
+          "25.1",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "38",
+          "45",
+          "",
+          "28"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        7
+      ],
+      "id": "A020",
+      "notas": [
+        "14",
+        "25.1",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        "38",
+        "45",
+        null,
+        "28"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 54.75,
+        "media_parcial": 73.0,
+        "notas_gravadas": [
+          "69",
+          "50",
+          "100",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          "11"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        1
+      ],
+      "id": "A021",
+      "notas": [
+        "69",
+        "50",
+        "100",
+        null
+      ],
+      "recuperacoes": [
+        "61",
+        null,
+        null,
+        "11"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 59.75,
+        "media_parcial": 59.75,
+        "notas_gravadas": [
+          "100",
+          "33",
+          "66",
+          "40"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        41
+      ],
+      "id": "A022",
+      "notas": [
+        "105",
+        "33",
+        "66",
+        "40"
+      ],
+      "recuperacoes": [
+        "80",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 40.25,
+        "media_parcial": 40.25,
+        "notas_gravadas": [
+          "51",
+          "46",
+          "29",
+          "35"
+        ],
+        "recuperacoes_gravadas": [
+          "36.7",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        19
+      ],
+      "id": "A023",
+      "notas": [
+        "51",
+        "46",
+        "29",
+        "35"
+      ],
+      "recuperacoes": [
+        "36.7",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 62.75,
+        "media_parcial": 62.75,
+        "notas_gravadas": [
+          "84",
+          "1",
+          "100",
+          "66"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "33"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        24
+      ],
+      "id": "A024",
+      "notas": [
+        "84",
+        "1",
+        "104",
+        "66"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "33"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 45.2,
+        "media_parcial": 60.266666666667,
+        "notas_gravadas": [
+          "",
+          "68",
+          "62.8",
+          "50"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A025",
+      "notas": [
+        null,
+        "68",
+        "62.8",
+        "50"
+      ],
+      "recuperacoes": [
+        "66",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 71.725,
+        "media_parcial": 71.725,
+        "notas_gravadas": [
+          "33",
+          "94",
+          "100",
+          "59.9"
+        ],
+        "recuperacoes_gravadas": [
+          "17",
+          "",
+          "1",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        24
+      ],
+      "id": "A026",
+      "notas": [
+        "33",
+        "94",
+        "100",
+        "59.9"
+      ],
+      "recuperacoes": [
+        "17",
+        null,
+        "1",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 66.5,
+        "media_parcial": 88.666666666667,
+        "notas_gravadas": [
+          "98",
+          "68",
+          "100",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        54
+      ],
+      "id": "A027",
+      "notas": [
+        "98",
+        "68",
+        "105.7",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 29.7,
+        "media_parcial": 59.4,
+        "notas_gravadas": [
+          "",
+          "68",
+          "50.8",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A028",
+      "notas": [
+        null,
+        "68",
+        "50.8",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 55.75,
+        "media_parcial": 74.333333333333,
+        "notas_gravadas": [
+          "44",
+          "63",
+          "",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        38
+      ],
+      "id": "A029",
+      "notas": [
+        "44",
+        "63",
+        null,
+        "106"
+      ],
+      "recuperacoes": [
+        "74",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 71.375,
+        "media_parcial": 71.375,
+        "notas_gravadas": [
+          "88.5",
+          "42",
+          "92",
+          "63"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "28",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        28
+      ],
+      "id": "A030",
+      "notas": [
+        "88.5",
+        "42",
+        "92",
+        "63"
+      ],
+      "recuperacoes": [
+        null,
+        "28",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 46.25,
+        "media_parcial": 46.25,
+        "notas_gravadas": [
+          "19",
+          "72",
+          "16",
+          "42"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "56",
+          "34",
+          "60"
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        75
+      ],
+      "id": "A031",
+      "notas": [
+        "19",
+        "72",
+        "16",
+        "42"
+      ],
+      "recuperacoes": [
+        null,
+        "56",
+        "34",
+        "71"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 54.75,
+        "media_parcial": 54.75,
+        "notas_gravadas": [
+          "51",
+          "70",
+          "86",
+          "12"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        36
+      ],
+      "id": "A032",
+      "notas": [
+        "51",
+        "70",
+        "86",
+        "12"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 34.0,
+        "media_parcial": 45.333333333333,
+        "notas_gravadas": [
+          "54",
+          "42",
+          "",
+          "22"
+        ],
+        "recuperacoes_gravadas": [
+          "32",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A033",
+      "notas": [
+        "54",
+        "42",
+        null,
+        "22"
+      ],
+      "recuperacoes": [
+        "32",
+        "78",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 29.175,
+        "media_parcial": 38.9,
+        "notas_gravadas": [
+          "1",
+          "",
+          "24.7",
+          "34"
+        ],
+        "recuperacoes_gravadas": [
+          "58",
+          "",
+          "",
+          "24"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A034",
+      "notas": [
+        "1",
+        null,
+        "24.7",
+        "34"
+      ],
+      "recuperacoes": [
+        "58",
+        null,
+        null,
+        "24"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 31.5,
+        "media_parcial": 31.5,
+        "notas_gravadas": [
+          "19",
+          "28",
+          "26",
+          "21"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A035",
+      "notas": [
+        "19",
+        "28",
+        "26",
+        "21"
+      ],
+      "recuperacoes": [
+        null,
+        "66",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 42.0,
+        "media_parcial": 56.0,
+        "notas_gravadas": [
+          "",
+          "65",
+          "60",
+          "43"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "32",
+          "2",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        26
+      ],
+      "id": "A036",
+      "notas": [
+        null,
+        "65",
+        "60",
+        "43"
+      ],
+      "recuperacoes": [
+        "61",
+        "32",
+        "2",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 69.0,
+        "media_parcial": 69.0,
+        "notas_gravadas": [
+          "56",
+          "93",
+          "27",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        59
+      ],
+      "id": "A037",
+      "notas": [
+        "56",
+        "93",
+        "27",
+        "104"
+      ],
+      "recuperacoes": [
+        null,
+        "65",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 67.75,
+        "media_parcial": 67.75,
+        "notas_gravadas": [
+          "100",
+          "66",
+          "62",
+          "43"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A038",
+      "notas": [
+        "109",
+        "66",
+        "62",
+        "43"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 51.5,
+        "media_parcial": 51.5,
+        "notas_gravadas": [
+          "77",
+          "3",
+          "26",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "60"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        49
+      ],
+      "id": "A039",
+      "notas": [
+        "77",
+        "3",
+        "26",
+        "109"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "62"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 54.075,
+        "media_parcial": 54.075,
+        "notas_gravadas": [
+          "83",
+          "78",
+          "24",
+          "31.3"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "4",
+          "22"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        20
+      ],
+      "id": "A040",
+      "notas": [
+        "83",
+        "78",
+        "24",
+        "31.3"
+      ],
+      "recuperacoes": [
+        null,
+        "73",
+        "4",
+        "22"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 41.625,
+        "media_parcial": 41.625,
+        "notas_gravadas": [
+          "16",
+          "23",
+          "96",
+          "31.5"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        34
+      ],
+      "id": "A041",
+      "notas": [
+        "16",
+        "23",
+        "96",
+        "31.5"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 36.75,
+        "media_parcial": 49.0,
+        "notas_gravadas": [
+          "11",
+          "95",
+          "41",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "32",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        46
+      ],
+      "id": "A042",
+      "notas": [
+        "11",
+        "95",
+        "41",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "32",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 36.5,
+        "media_parcial": 48.666666666667,
+        "notas_gravadas": [
+          "",
+          "25",
+          "21",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "43.2",
+          "",
+          "",
+          "31.6"
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        104
+      ],
+      "id": "A043",
+      "notas": [
+        null,
+        "25",
+        "21",
+        "101.2"
+      ],
+      "recuperacoes": [
+        "43.2",
+        null,
+        null,
+        "31.6"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 47.325,
+        "media_parcial": 47.325,
+        "notas_gravadas": [
+          "71",
+          "11",
+          "27",
+          "14"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "20",
+          "44.3",
+          "54"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A044",
+      "notas": [
+        "71",
+        "11",
+        "27",
+        "14"
+      ],
+      "recuperacoes": [
+        null,
+        "20",
+        "44.3",
+        "54"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 41.75,
+        "media_parcial": 55.666666666667,
+        "notas_gravadas": [
+          "81",
+          "36",
+          "50",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        9
+      ],
+      "id": "A045",
+      "notas": [
+        "81",
+        "36",
+        "50",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 53.25,
+        "media_parcial": 53.25,
+        "notas_gravadas": [
+          "45",
+          "77",
+          "6",
+          "85"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "60"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        9
+      ],
+      "id": "A046",
+      "notas": [
+        "45",
+        "77",
+        "6",
+        "85"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "69"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 26.0,
+        "media_parcial": 52.0,
+        "notas_gravadas": [
+          "100",
+          "4",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "60",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A047",
+      "notas": [
+        "104",
+        "4",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "73",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 16.3,
+        "media_parcial": 65.2,
+        "notas_gravadas": [
+          "65.2",
+          "",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "9",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        2
+      ],
+      "id": "A048",
+      "notas": [
+        "65.2",
+        null,
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        "9",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 83.575,
+        "media_parcial": 83.575,
+        "notas_gravadas": [
+          "91",
+          "96.4",
+          "95.9",
+          "51"
+        ],
+        "recuperacoes_gravadas": [
+          "40",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A049",
+      "notas": [
+        "91",
+        "96.4",
+        "95.9",
+        "51"
+      ],
+      "recuperacoes": [
+        "40",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 47.75,
+        "media_parcial": 63.666666666667,
+        "notas_gravadas": [
+          "75",
+          "67",
+          "",
+          "49"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "40"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        14
+      ],
+      "id": "A050",
+      "notas": [
+        "75",
+        "67",
+        null,
+        "49"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "40"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 60.0,
+        "media_parcial": 80.0,
+        "notas_gravadas": [
+          "74",
+          "",
+          "66",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "27",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A051",
+      "notas": [
+        "74",
+        null,
+        "66",
+        "108.6"
+      ],
+      "recuperacoes": [
+        "27",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 54.175,
+        "media_parcial": 54.175,
+        "notas_gravadas": [
+          "53",
+          "0",
+          "10.4",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "47",
+          "3.7",
+          "60",
+          "4"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A052",
+      "notas": [
+        "53",
+        "0",
+        "10.4",
+        "102"
+      ],
+      "recuperacoes": [
+        "47",
+        "3.7",
+        "71",
+        "4"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 64.25,
+        "media_parcial": 64.25,
+        "notas_gravadas": [
+          "88",
+          "65",
+          "4",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A053",
+      "notas": [
+        "88",
+        "65",
+        "4",
+        "109"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 9.5,
+        "media_parcial": 19.0,
+        "notas_gravadas": [
+          "",
+          "5",
+          "33",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        26
+      ],
+      "id": "A054",
+      "notas": [
+        null,
+        "5",
+        "33",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 20.5,
+        "media_parcial": 27.333333333333,
+        "notas_gravadas": [
+          "",
+          "68",
+          "11",
+          "3"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        104
+      ],
+      "id": "A055",
+      "notas": [
+        null,
+        "68",
+        "11",
+        "3"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 52.5,
+        "media_parcial": 70.0,
+        "notas_gravadas": [
+          "69",
+          "82",
+          "59",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "16",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        35
+      ],
+      "id": "A056",
+      "notas": [
+        "69",
+        "82",
+        "59",
+        null
+      ],
+      "recuperacoes": [
+        "16",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 31.0,
+        "media_parcial": 41.333333333333,
+        "notas_gravadas": [
+          "88",
+          "",
+          "22",
+          "14"
+        ],
+        "recuperacoes_gravadas": [
+          "11",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A057",
+      "notas": [
+        "88",
+        null,
+        "22",
+        "14"
+      ],
+      "recuperacoes": [
+        "11",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 8.0,
+        "media_parcial": 16.0,
+        "notas_gravadas": [
+          "",
+          "2",
+          "30",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        45
+      ],
+      "id": "A058",
+      "notas": [
+        null,
+        "2",
+        "30",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 55.45,
+        "media_parcial": 55.45,
+        "notas_gravadas": [
+          "3",
+          "94",
+          "93.8",
+          "31"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "60",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        95
+      ],
+      "id": "A059",
+      "notas": [
+        "3",
+        "94",
+        "93.8",
+        "31"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "61",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 32.75,
+        "media_parcial": 43.666666666667,
+        "notas_gravadas": [
+          "32",
+          "",
+          "19",
+          "80"
+        ],
+        "recuperacoes_gravadas": [
+          "12",
+          "8",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        18
+      ],
+      "id": "A060",
+      "notas": [
+        "32",
+        null,
+        "19",
+        "80"
+      ],
+      "recuperacoes": [
+        "12",
+        "8",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 77.25,
+        "media_parcial": 77.25,
+        "notas_gravadas": [
+          "100",
+          "57",
+          "52",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "37",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A061",
+      "notas": [
+        "106",
+        "57",
+        "52",
+        "110"
+      ],
+      "recuperacoes": [
+        "62.7",
+        null,
+        "37",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 45.425,
+        "media_parcial": 45.425,
+        "notas_gravadas": [
+          "20.7",
+          "26.3",
+          "82",
+          "26"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "48",
+          "",
+          "31"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        41
+      ],
+      "id": "A062",
+      "notas": [
+        "20.7",
+        "26.3",
+        "82",
+        "26"
+      ],
+      "recuperacoes": [
+        null,
+        "48",
+        null,
+        "31"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 68.925,
+        "media_parcial": 68.925,
+        "notas_gravadas": [
+          "100",
+          "34.7",
+          "85",
+          "56"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        2
+      ],
+      "id": "A063",
+      "notas": [
+        "105",
+        "34.7",
+        "85",
+        "56"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 72.0,
+        "media_parcial": 72.0,
+        "notas_gravadas": [
+          "71",
+          "52",
+          "100",
+          "65"
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          "28"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        76
+      ],
+      "id": "A064",
+      "notas": [
+        "71",
+        "52",
+        "109.5",
+        "65"
+      ],
+      "recuperacoes": [
+        "78",
+        null,
+        null,
+        "28"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 79.575,
+        "media_parcial": 79.575,
+        "notas_gravadas": [
+          "46",
+          "100",
+          "77.3",
+          "95"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "17.9",
+          "",
+          "20"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        27
+      ],
+      "id": "A065",
+      "notas": [
+        "46",
+        "102",
+        "77.3",
+        "95"
+      ],
+      "recuperacoes": [
+        null,
+        "17.9",
+        null,
+        "20"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 6.3,
+        "media_parcial": 25.2,
+        "notas_gravadas": [
+          "",
+          "",
+          "",
+          "25.2"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "31.8",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        47
+      ],
+      "id": "A066",
+      "notas": [
+        null,
+        null,
+        null,
+        "25.2"
+      ],
+      "recuperacoes": [
+        null,
+        "80",
+        "31.8",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 42.175,
+        "media_parcial": 84.35,
+        "notas_gravadas": [
+          "84",
+          "84.7",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A067",
+      "notas": [
+        "84",
+        "84.7",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 60.75,
+        "media_parcial": 60.75,
+        "notas_gravadas": [
+          "19",
+          "100",
+          "70",
+          "54"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        11
+      ],
+      "id": "A068",
+      "notas": [
+        "19",
+        "109",
+        "70",
+        "54"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 34.0,
+        "media_parcial": 34.0,
+        "notas_gravadas": [
+          "44",
+          "6",
+          "54",
+          "32"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "14.5"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        3
+      ],
+      "id": "A069",
+      "notas": [
+        "44",
+        "6",
+        "54",
+        "32"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "14.5"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 53.625,
+        "media_parcial": 71.5,
+        "notas_gravadas": [
+          "99",
+          "100",
+          "",
+          "15.5"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A070",
+      "notas": [
+        "99",
+        "100",
+        null,
+        "15.5"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 79.45,
+        "media_parcial": 79.45,
+        "notas_gravadas": [
+          "94",
+          "67",
+          "85.8",
+          "71"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "33",
+          "60"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        74
+      ],
+      "id": "A071",
+      "notas": [
+        "94",
+        "67",
+        "85.8",
+        "71"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "33",
+        "75"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 51.125,
+        "media_parcial": 51.125,
+        "notas_gravadas": [
+          "33",
+          "77",
+          "40.5",
+          "43"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "54"
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        66
+      ],
+      "id": "A072",
+      "notas": [
+        "33",
+        "77",
+        "40.5",
+        "43"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "54"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 57.75,
+        "media_parcial": 57.75,
+        "notas_gravadas": [
+          "47",
+          "55",
+          "57",
+          "72"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "32",
+          "",
+          "5"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        48
+      ],
+      "id": "A073",
+      "notas": [
+        "47",
+        "55",
+        "57",
+        "72"
+      ],
+      "recuperacoes": [
+        null,
+        "32",
+        null,
+        "5"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 49.5,
+        "media_parcial": 49.5,
+        "notas_gravadas": [
+          "69",
+          "14",
+          "55",
+          "38"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "5.9",
+          "60"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        90
+      ],
+      "id": "A074",
+      "notas": [
+        "69",
+        "14",
+        "55",
+        "38"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "5.9",
+        "72.5"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 56.75,
+        "media_parcial": 56.75,
+        "notas_gravadas": [
+          "69",
+          "86",
+          "66",
+          "6"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "13",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A075",
+      "notas": [
+        "69",
+        "86",
+        "66",
+        "6"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "13",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 66.25,
+        "media_parcial": 66.25,
+        "notas_gravadas": [
+          "92",
+          "17",
+          "100",
+          "3"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "56"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A076",
+      "notas": [
+        "92",
+        "17",
+        "106",
+        "3"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "56"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 44.075,
+        "media_parcial": 44.075,
+        "notas_gravadas": [
+          "19",
+          "68",
+          "81.3",
+          "8"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A077",
+      "notas": [
+        "19",
+        "68",
+        "81.3",
+        "8"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 48.4,
+        "media_parcial": 96.8,
+        "notas_gravadas": [
+          "99",
+          "",
+          "",
+          "94.6"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "37",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        0
+      ],
+      "id": "A078",
+      "notas": [
+        "99",
+        null,
+        null,
+        "94.6"
+      ],
+      "recuperacoes": [
+        null,
+        "37",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 27.5,
+        "media_parcial": 36.666666666667,
+        "notas_gravadas": [
+          "1",
+          "85",
+          "",
+          "24"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "28",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        4
+      ],
+      "id": "A079",
+      "notas": [
+        "1",
+        "85",
+        null,
+        "24"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "28",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 33.25,
+        "media_parcial": 66.5,
+        "notas_gravadas": [
+          "21",
+          "",
+          "87",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "46",
+          "46",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A080",
+      "notas": [
+        "21",
+        null,
+        "87",
+        null
+      ],
+      "recuperacoes": [
+        "46",
+        "46",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 64.75,
+        "media_parcial": 64.75,
+        "notas_gravadas": [
+          "100",
+          "71",
+          "28",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "34",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        36
+      ],
+      "id": "A081",
+      "notas": [
+        "102",
+        "71",
+        "28",
+        "60"
+      ],
+      "recuperacoes": [
+        null,
+        "34",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 49.75,
+        "media_parcial": 66.333333333333,
+        "notas_gravadas": [
+          "",
+          "100",
+          "61",
+          "38"
+        ],
+        "recuperacoes_gravadas": [
+          "6",
+          "",
+          "25",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        39
+      ],
+      "id": "A082",
+      "notas": [
+        null,
+        "105",
+        "61",
+        "38"
+      ],
+      "recuperacoes": [
+        "6",
+        null,
+        "25",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 54.55,
+        "media_parcial": 72.733333333333,
+        "notas_gravadas": [
+          "65.2",
+          "",
+          "66",
+          "87"
+        ],
+        "recuperacoes_gravadas": [
+          "28",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        40
+      ],
+      "id": "A083",
+      "notas": [
+        "65.2",
+        null,
+        "66",
+        "87"
+      ],
+      "recuperacoes": [
+        "28",
+        "73",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 41.25,
+        "media_parcial": 55.0,
+        "notas_gravadas": [
+          "",
+          "46",
+          "52",
+          "67"
+        ],
+        "recuperacoes_gravadas": [
+          "10",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A084",
+      "notas": [
+        null,
+        "46",
+        "52",
+        "67"
+      ],
+      "recuperacoes": [
+        "10",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 48.5,
+        "media_parcial": 48.5,
+        "notas_gravadas": [
+          "5",
+          "84",
+          "15",
+          "82"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "23",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        6
+      ],
+      "id": "A085",
+      "notas": [
+        "5",
+        "84",
+        "15",
+        "82"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "23",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 36.75,
+        "media_parcial": 73.5,
+        "notas_gravadas": [
+          "87",
+          "",
+          "",
+          "60"
+        ],
+        "recuperacoes_gravadas": [
+          "16",
+          "",
+          "",
+          "55"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A086",
+      "notas": [
+        "87",
+        null,
+        null,
+        "60"
+      ],
+      "recuperacoes": [
+        "16",
+        null,
+        null,
+        "55"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 37.25,
+        "media_parcial": 49.666666666667,
+        "notas_gravadas": [
+          "25",
+          "",
+          "47",
+          "77"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        55
+      ],
+      "id": "A087",
+      "notas": [
+        "25",
+        null,
+        "47",
+        "77"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 60.25,
+        "media_parcial": 60.25,
+        "notas_gravadas": [
+          "30",
+          "100",
+          "100",
+          "11"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "28",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A088",
+      "notas": [
+        "30",
+        "103",
+        "100",
+        "11"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "28",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 79.5,
+        "media_parcial": 79.5,
+        "notas_gravadas": [
+          "59",
+          "5",
+          "100",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "59",
+          "49",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A089",
+      "notas": [
+        "59",
+        "5",
+        "109",
+        "105"
+      ],
+      "recuperacoes": [
+        null,
+        "59",
+        "49",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 18.75,
+        "media_parcial": 37.5,
+        "notas_gravadas": [
+          "15",
+          "35",
+          "",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        40
+      ],
+      "id": "A090",
+      "notas": [
+        "15",
+        "35",
+        null,
+        null
+      ],
+      "recuperacoes": [
+        null,
+        "73",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 44.25,
+        "media_parcial": 44.25,
+        "notas_gravadas": [
+          "86",
+          "21",
+          "35",
+          "35"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A091",
+      "notas": [
+        "86",
+        "21",
+        "35",
+        "35"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 41.5,
+        "media_parcial": 41.5,
+        "notas_gravadas": [
+          "1",
+          "19",
+          "51",
+          "88"
+        ],
+        "recuperacoes_gravadas": [
+          "8",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        102
+      ],
+      "id": "A092",
+      "notas": [
+        "1",
+        "19",
+        "51",
+        "88"
+      ],
+      "recuperacoes": [
+        "8",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 44.75,
+        "media_parcial": 59.666666666667,
+        "notas_gravadas": [
+          "98",
+          "",
+          "56",
+          "25"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        2
+      ],
+      "id": "A093",
+      "notas": [
+        "98",
+        null,
+        "56",
+        "25"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 78.45,
+        "media_parcial": 78.45,
+        "notas_gravadas": [
+          "63.8",
+          "64",
+          "88",
+          "98"
+        ],
+        "recuperacoes_gravadas": [
+          "51",
+          "",
+          "",
+          "8.5"
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        2
+      ],
+      "id": "A094",
+      "notas": [
+        "63.8",
+        "64",
+        "88",
+        "98"
+      ],
+      "recuperacoes": [
+        "51",
+        null,
+        null,
+        "8.5"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 26.3,
+        "media_parcial": 26.3,
+        "notas_gravadas": [
+          "49.2",
+          "6",
+          "0",
+          "0"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "56",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        1
+      ],
+      "id": "A095",
+      "notas": [
+        "49.2",
+        "6",
+        "0",
+        "0"
+      ],
+      "recuperacoes": [
+        null,
+        "56",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 20.525,
+        "media_parcial": 20.525,
+        "notas_gravadas": [
+          "50.1",
+          "10",
+          "17",
+          "5"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        44
+      ],
+      "id": "A096",
+      "notas": [
+        "50.1",
+        "10",
+        "17",
+        "5"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 68.0,
+        "media_parcial": 68.0,
+        "notas_gravadas": [
+          "77",
+          "74",
+          "21",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "24",
+          "",
+          "12",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        43
+      ],
+      "id": "A097",
+      "notas": [
+        "77",
+        "74",
+        "21",
+        "104.1"
+      ],
+      "recuperacoes": [
+        "24",
+        null,
+        "12",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 36.25,
+        "media_parcial": 48.333333333333,
+        "notas_gravadas": [
+          "",
+          "76",
+          "37",
+          "2"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "40",
+          "29"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        7
+      ],
+      "id": "A098",
+      "notas": [
+        null,
+        "76",
+        "37",
+        "2"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "40",
+        "29"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 69.4,
+        "media_parcial": 69.4,
+        "notas_gravadas": [
+          "100",
+          "100",
+          "59",
+          "18.6"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [
+        63
+      ],
+      "id": "A099",
+      "notas": [
+        "107",
+        "104",
+        "59",
+        "18.6"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 51.8,
+        "media_parcial": 51.8,
+        "notas_gravadas": [
+          "83.2",
+          "19",
+          "21",
+          "84"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "17",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        33
+      ],
+      "id": "A100",
+      "notas": [
+        "83.2",
+        "19",
+        "21",
+        "84"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "17",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 46.2,
+        "media_parcial": 61.6,
+        "notas_gravadas": [
+          "",
+          "51",
+          "45.8",
+          "88"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        19
+      ],
+      "id": "A101",
+      "notas": [
+        null,
+        "51",
+        "45.8",
+        "88"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 49.0,
+        "media_parcial": 65.333333333333,
+        "notas_gravadas": [
+          "",
+          "15",
+          "66",
+          "71"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "59",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        48
+      ],
+      "id": "A102",
+      "notas": [
+        null,
+        "15",
+        "66",
+        "71"
+      ],
+      "recuperacoes": [
+        null,
+        "59",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 42.0,
+        "media_parcial": 56.0,
+        "notas_gravadas": [
+          "",
+          "49",
+          "95",
+          "24"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A103",
+      "notas": [
+        null,
+        "49",
+        "95",
+        "24"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 29.25,
+        "media_parcial": 39.0,
+        "notas_gravadas": [
+          "17",
+          "",
+          "51",
+          "22"
+        ],
+        "recuperacoes_gravadas": [
+          "44",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        4
+      ],
+      "id": "A104",
+      "notas": [
+        "17",
+        null,
+        "51",
+        "22"
+      ],
+      "recuperacoes": [
+        "44",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 38.0,
+        "media_parcial": 50.666666666667,
+        "notas_gravadas": [
+          "50",
+          "42",
+          "45.3",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "40",
+          "",
+          "60",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        97
+      ],
+      "id": "A105",
+      "notas": [
+        "50",
+        "42",
+        "45.3",
+        null
+      ],
+      "recuperacoes": [
+        "40",
+        null,
+        "76.4",
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 72.05,
+        "media_parcial": 96.066666666667,
+        "notas_gravadas": [
+          "",
+          "99.2",
+          "92",
+          "97"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "34",
+          "9"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A106",
+      "notas": [
+        null,
+        "99.2",
+        "92",
+        "97"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "34",
+        "9"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 38.0,
+        "media_parcial": 76.0,
+        "notas_gravadas": [
+          "",
+          "83",
+          "69",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "13",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        46
+      ],
+      "id": "A107",
+      "notas": [
+        null,
+        "83",
+        "69",
+        null
+      ],
+      "recuperacoes": [
+        "13",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 40.875,
+        "media_parcial": 54.5,
+        "notas_gravadas": [
+          "72.5",
+          "0",
+          "91",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "60",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [
+        0
+      ],
+      "id": "A108",
+      "notas": [
+        "72.5",
+        "0",
+        "91",
+        null
+      ],
+      "recuperacoes": [
+        "76",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 70.25,
+        "media_parcial": 93.666666666667,
+        "notas_gravadas": [
+          "",
+          "100",
+          "100",
+          "81"
+        ],
+        "recuperacoes_gravadas": [
+          "13.5",
+          "",
+          "",
+          "22.1"
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        36
+      ],
+      "id": "A109",
+      "notas": [
+        null,
+        "103",
+        "104.2",
+        "81"
+      ],
+      "recuperacoes": [
+        "13.5",
+        null,
+        null,
+        "22.1"
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 70.75,
+        "media_parcial": 70.75,
+        "notas_gravadas": [
+          "85",
+          "26",
+          "100",
+          "62"
+        ],
+        "recuperacoes_gravadas": [
+          "1",
+          "36",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A110",
+      "notas": [
+        "85",
+        "26",
+        "101",
+        "62"
+      ],
+      "recuperacoes": [
+        "1",
+        "36",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 39.75,
+        "media_parcial": 39.75,
+        "notas_gravadas": [
+          "96",
+          "34",
+          "9",
+          "20"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        19
+      ],
+      "id": "A111",
+      "notas": [
+        "96",
+        "34",
+        "9",
+        "20"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 43.5,
+        "media_parcial": 58.0,
+        "notas_gravadas": [
+          "51",
+          "",
+          "95",
+          "28"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A112",
+      "notas": [
+        "51",
+        null,
+        "95",
+        "28"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 43.4,
+        "media_parcial": 57.866666666667,
+        "notas_gravadas": [
+          "",
+          "43",
+          "89",
+          "41.6"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A113",
+      "notas": [
+        null,
+        "43",
+        "89",
+        "41.6"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 52.25,
+        "media_parcial": 52.25,
+        "notas_gravadas": [
+          "1",
+          "76",
+          "32",
+          "100"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "18.2",
+          "31"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [
+        61
+      ],
+      "id": "A114",
+      "notas": [
+        "1",
+        "76",
+        "32",
+        "106"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "18.2",
+        "31"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 64.75,
+        "media_parcial": 64.75,
+        "notas_gravadas": [
+          "86",
+          "61",
+          "64",
+          "48"
+        ],
+        "recuperacoes_gravadas": [
+          "38",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A115",
+      "notas": [
+        "86",
+        "61",
+        "64",
+        "48"
+      ],
+      "recuperacoes": [
+        "38",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 81.25,
+        "media_parcial": 81.25,
+        "notas_gravadas": [
+          "73",
+          "100",
+          "100",
+          "52"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "60",
+          "",
+          ""
+        ],
+        "situacao": "aprovado",
+        "situacao_codigo_legado": 1
+      },
+      "faltas": [],
+      "id": "A116",
+      "notas": [
+        "73",
+        "103",
+        "109.1",
+        "52"
+      ],
+      "recuperacoes": [
+        null,
+        "78",
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 120,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 51.5,
+        "media_parcial": 68.666666666667,
+        "notas_gravadas": [
+          "85",
+          "",
+          "100",
+          "21"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "situacao": "reprovado_por_faltas",
+        "situacao_codigo_legado": 3
+      },
+      "faltas": [
+        100
+      ],
+      "id": "A117",
+      "notas": [
+        "85",
+        null,
+        "104.3",
+        "21"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 26.0,
+        "media_parcial": 34.666666666667,
+        "notas_gravadas": [
+          "",
+          "33",
+          "63",
+          "6"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "8"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A118",
+      "notas": [
+        null,
+        "33",
+        "63",
+        "6"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "8"
+      ]
+    },
+    {
+      "carga_horaria": 80,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 42.125,
+        "media_parcial": 56.166666666667,
+        "notas_gravadas": [
+          "100",
+          "26",
+          "42.5",
+          ""
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "",
+          "47"
+        ],
+        "situacao": "cursando",
+        "situacao_codigo_legado": 0
+      },
+      "faltas": [],
+      "id": "A119",
+      "notas": [
+        "102",
+        "26",
+        "42.5",
+        null
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        null,
+        "47"
+      ]
+    },
+    {
+      "carga_horaria": 40,
+      "descricao": "aleatório",
+      "esperado": {
+        "media": 55.05,
+        "media_parcial": 55.05,
+        "notas_gravadas": [
+          "37",
+          "82",
+          "84",
+          "17"
+        ],
+        "recuperacoes_gravadas": [
+          "",
+          "",
+          "60",
+          "17.2"
+        ],
+        "situacao": "reprovado",
+        "situacao_codigo_legado": 4
+      },
+      "faltas": [],
+      "id": "A120",
+      "notas": [
+        "37",
+        "82",
+        "84",
+        "17"
+      ],
+      "recuperacoes": [
+        null,
+        null,
+        "73",
+        "17.2"
+      ]
+    }
+  ],
+  "casos_sha256": "3e1d091aa5bc53d8305877fe11bb184070671f370076a8ceda9e5fb89e81c379",
+  "descricao": "Regra de notas do Atena legado, obtida executando o código no SHA fixado.",
+  "fonte": {
+    "endpoint": "Models/ajax/CadastroNotas.php",
+    "imagens": {
+      "mariadb:10.4": "mariadb@sha256:22edfe1c78349f8cae88bbb5c2873b7e6c515be767c91c691308ce57445806f3",
+      "puck-atena-legado": "puck-atena-legado@sha256:41b5ec8038de13cf9c9424ae5ec14fe51aa9da671e2d1390dd124cc722eb0055"
+    },
+    "repositorio": "/mnt/c/Users/mclov/IdeaProjects/Atena",
+    "sha": "ac48dc552b817233547104a5d0acba932d41ab91"
+  },
+  "suposicoes": [
+    "colunas de notas como texto: o valor gravado é o calculado pelo PHP (tipo real de 2024 desconhecido)",
+    "uma disciplina por professor por turma: o legado lê a carga horária da primeira disciplina do professor na turma"
+  ]
+}

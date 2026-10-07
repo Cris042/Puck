@@ -1,0 +1,340 @@
+# Contrato HTTP da fatia vertical — idêntico para todas as células (base técnica, seção 5).
+# RASCUNHO para validação do autor (decisão P-01); congela na etapa 2 do protocolo.
+#
+# É o que a verificação automática exercita. A interface web (telas) é livre e não está aqui.
+openapi: 3.1.0
+info:
+  title: Escola — fatia vertical do Atena
+  version: 1.0.0
+  description: |
+    Regras gerais:
+    - Autenticação por **cookie de sessão** emitido em `POST /api/sessao` (HttpOnly; Secure fora de
+      desenvolvimento; SameSite=Lax). Sem sessão: 401. Perfil sem permissão: 403, sem efeito colateral.
+    - Toda mutação da API exige `Content-Type: application/json`; outro tipo de corpo recebe 415.
+    - Erros: `{"erro": {"codigo": "<snake_case>", "mensagem": "<texto>"}}`.
+    - Nenhuma resposta contém senha, hash de senha, pepper ou token de sessão no corpo.
+    - **Primeiro secretário:** ao subir (`make migrate` ou `make run`), se não houver nenhum
+      secretário, a aplicação cria um com as variáveis `APP_BOOTSTRAP_NOME`, `APP_BOOTSTRAP_EMAIL`,
+      `APP_BOOTSTRAP_MATRICULA` e `APP_BOOTSTRAP_SENHA`.
+    - Números de nota aceitam decimais. Média e média parcial podem ser devolvidas com ou sem
+      arredondamento para 2 casas.
+    - Regra de notas: `spec/atena/requisitos.md`, seção "Regra de notas". A situação é calculada
+      a partir das notas e faltas **atuais** no momento da consulta.
+
+paths:
+  /saude:
+    get:
+      summary: Aplicação no ar
+      security: []
+      responses:
+        "200": {description: ok, content: {application/json: {schema: {type: object, required: [status], properties: {status: {const: ok}}}}}}
+
+  /api/sessao:
+    post:
+      summary: Entrar (qualquer perfil)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, matricula, senha]
+              properties:
+                email: {type: string}
+                matricula: {type: string}
+                senha: {type: string}
+      responses:
+        "200": {description: sessão criada (cookie), content: {application/json: {schema: {$ref: "#/components/schemas/Sessao"}}}}
+        "401": {description: "credenciais inválidas — mesma resposta para qualquer campo errado ou usuário inexistente; codigo = credenciais_invalidas"}
+        "429": {description: "mais de 5 tentativas falhas por minuto para a mesma conta + IP"}
+    get:
+      summary: Sessão atual
+      responses:
+        "200": {description: ok, content: {application/json: {schema: {$ref: "#/components/schemas/Sessao"}}}}
+        "401": {description: sem sessão}
+    delete:
+      summary: Sair (invalida a sessão no servidor)
+      responses:
+        "204": {description: sessão encerrada}
+
+  /api/cursos:
+    post:
+      summary: Cadastrar curso (secretário)
+      requestBody: {required: true, content: {application/json: {schema: {$ref: "#/components/schemas/NovoNome"}}}}
+      responses:
+        "201": {description: criado, content: {application/json: {schema: {$ref: "#/components/schemas/ItemNomeado"}}}}
+        "409": {description: nome já existe}
+    get:
+      summary: Listar cursos (secretário)
+      responses:
+        "200": {description: ok, content: {application/json: {schema: {type: array, items: {$ref: "#/components/schemas/ItemNomeado"}}}}}
+
+  /api/series:
+    post:
+      summary: Cadastrar série (secretário)
+      requestBody: {required: true, content: {application/json: {schema: {$ref: "#/components/schemas/NovoNome"}}}}
+      responses:
+        "201": {description: criado, content: {application/json: {schema: {$ref: "#/components/schemas/ItemNomeado"}}}}
+        "409": {description: nome já existe}
+
+  /api/turmas:
+    post:
+      summary: Cadastrar turma = ano letivo + curso + série (secretário)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ano, curso_id, serie_id]
+              properties:
+                ano: {type: string, description: "ano letivo, ex.: 2026"}
+                curso_id: {type: integer}
+                serie_id: {type: integer}
+      responses:
+        "201": {description: criada, content: {application/json: {schema: {$ref: "#/components/schemas/Turma"}}}}
+        "409": {description: já existe turma com o mesmo ano, curso e série}
+        "422": {description: curso ou série inexistente}
+
+  /api/alunos:
+    post:
+      summary: Cadastrar aluno (secretário)
+      requestBody: {required: true, content: {application/json: {schema: {$ref: "#/components/schemas/NovaPessoa"}}}}
+      responses:
+        "201": {description: criado, content: {application/json: {schema: {$ref: "#/components/schemas/Pessoa"}}}}
+        "409": {description: matrícula ou e-mail já cadastrados (em qualquer perfil)}
+        "422": {description: "dados inválidos (ex.: senha com menos de 8 caracteres)"}
+
+  /api/professores:
+    post:
+      summary: Cadastrar professor (secretário)
+      requestBody: {required: true, content: {application/json: {schema: {$ref: "#/components/schemas/NovaPessoa"}}}}
+      responses:
+        "201": {description: criado, content: {application/json: {schema: {$ref: "#/components/schemas/Pessoa"}}}}
+        "409": {description: matrícula ou e-mail já cadastrados}
+        "422": {description: dados inválidos}
+
+  /api/secretarios:
+    post:
+      summary: Cadastrar secretário (secretário)
+      requestBody: {required: true, content: {application/json: {schema: {$ref: "#/components/schemas/NovaPessoa"}}}}
+      responses:
+        "201": {description: criado, content: {application/json: {schema: {$ref: "#/components/schemas/Pessoa"}}}}
+        "409": {description: matrícula ou e-mail já cadastrados}
+        "422": {description: dados inválidos}
+
+  /api/turmas/{turma_id}/disciplinas:
+    post:
+      summary: Cadastrar disciplina na turma, com professor e carga horária (secretário)
+      parameters: [{$ref: "#/components/parameters/TurmaId"}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, professor_id, carga_horaria]
+              properties:
+                nome: {type: string}
+                professor_id: {type: integer}
+                carga_horaria: {type: integer, minimum: 1, description: horas}
+      responses:
+        "201": {description: criada, content: {application/json: {schema: {$ref: "#/components/schemas/Disciplina"}}}}
+        "404": {description: turma inexistente}
+        "409": {description: disciplina com o mesmo nome já existe na turma}
+        "422": {description: professor inexistente ou carga horária inválida}
+
+  /api/turmas/{turma_id}/matriculas:
+    post:
+      summary: Matricular aluno na turma; ele passa a constar em todas as disciplinas dela (secretário)
+      parameters: [{$ref: "#/components/parameters/TurmaId"}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object, required: [aluno_id], properties: {aluno_id: {type: integer}}}
+      responses:
+        "201": {description: matriculado, content: {application/json: {schema: {type: object, required: [turma_id, aluno_id], properties: {turma_id: {type: integer}, aluno_id: {type: integer}}}}}}
+        "404": {description: turma inexistente}
+        "409": {description: aluno já matriculado na turma}
+        "422": {description: aluno inexistente}
+
+  /api/prazos/{bimestre}:
+    put:
+      summary: Definir o prazo de lançamento do bimestre (secretário)
+      parameters:
+        - {name: bimestre, in: path, required: true, schema: {type: integer, minimum: 1, maximum: 4}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object, required: [data_limite], properties: {data_limite: {type: string, format: date}}}
+      responses:
+        "200": {description: definido}
+        "422": {description: bimestre ou data inválidos}
+
+  /api/disciplinas/{disciplina_id}/notas:
+    put:
+      summary: Lançar notas e recuperações dos 4 bimestres (professor da disciplina)
+      description: |
+        Para cada aluno listado, substitui as 4 notas e as 4 recuperações. `null` = não lançada.
+        Notas acima de 100 são gravadas como 100; recuperações acima de 60, como 60. Alunos não
+        listados não mudam.
+      parameters: [{$ref: "#/components/parameters/DisciplinaId"}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lancamentos]
+              properties:
+                lancamentos:
+                  type: array
+                  items:
+                    type: object
+                    required: [aluno_id, notas, recuperacoes]
+                    properties:
+                      aluno_id: {type: integer}
+                      notas: {$ref: "#/components/schemas/QuatroValores"}
+                      recuperacoes: {$ref: "#/components/schemas/QuatroValores"}
+      responses:
+        "200": {description: lançado, content: {application/json: {schema: {type: object, required: [atualizados], properties: {atualizados: {type: integer}}}}}}
+        "403": {description: não é o professor da disciplina}
+        "404": {description: disciplina inexistente}
+        "422": {description: "valor negativo, lista sem 4 posições ou aluno não matriculado na turma"}
+
+  /api/disciplinas/{disciplina_id}/faltas:
+    post:
+      summary: Registrar faltas de uma data (professor da disciplina); somam-se às anteriores
+      parameters: [{$ref: "#/components/parameters/DisciplinaId"}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data, bimestre, registros]
+              properties:
+                data: {type: string, format: date}
+                bimestre: {type: integer, minimum: 1, maximum: 4}
+                registros:
+                  type: array
+                  items:
+                    type: object
+                    required: [aluno_id, faltas]
+                    properties:
+                      aluno_id: {type: integer}
+                      faltas: {type: integer, minimum: 0}
+      responses:
+        "201": {description: registrado, content: {application/json: {schema: {type: object, required: [registrados], properties: {registrados: {type: integer}}}}}}
+        "403": {description: não é o professor da disciplina}
+        "404": {description: disciplina inexistente}
+        "422": {description: dados inválidos ou aluno não matriculado}
+
+  /api/disciplinas/{disciplina_id}/boletim:
+    get:
+      summary: Boletim da disciplina (professor da disciplina ou secretário)
+      parameters: [{$ref: "#/components/parameters/DisciplinaId"}]
+      responses:
+        "200":
+          description: todos os alunos matriculados na turma, lançados ou não
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [disciplina, alunos]
+                properties:
+                  disciplina: {$ref: "#/components/schemas/Disciplina"}
+                  alunos: {type: array, items: {$ref: "#/components/schemas/LinhaBoletim"}}
+        "403": {description: sem permissão}
+        "404": {description: disciplina inexistente}
+
+  /api/alunos/eu/boletim:
+    get:
+      summary: Boletim do próprio aluno, uma linha por disciplina das turmas em que está matriculado
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [disciplinas]
+                properties:
+                  disciplinas:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/LinhaBoletim"
+                        - type: object
+                          required: [disciplina_id, disciplina_nome]
+                          properties:
+                            disciplina_id: {type: integer}
+                            disciplina_nome: {type: string}
+        "403": {description: perfil não é aluno}
+
+components:
+  parameters:
+    TurmaId: {name: turma_id, in: path, required: true, schema: {type: integer}}
+    DisciplinaId: {name: disciplina_id, in: path, required: true, schema: {type: integer}}
+  schemas:
+    Sessao:
+      type: object
+      required: [perfil, nome, matricula]
+      properties:
+        perfil: {enum: [aluno, professor, secretario]}
+        nome: {type: string}
+        matricula: {type: string}
+    NovoNome:
+      type: object
+      required: [nome]
+      properties: {nome: {type: string, minLength: 1}}
+    ItemNomeado:
+      type: object
+      required: [id, nome]
+      properties: {id: {type: integer}, nome: {type: string}}
+    Turma:
+      type: object
+      required: [id, ano, curso_id, serie_id]
+      properties: {id: {type: integer}, ano: {type: string}, curso_id: {type: integer}, serie_id: {type: integer}}
+    NovaPessoa:
+      type: object
+      required: [nome, email, matricula, senha]
+      properties:
+        nome: {type: string}
+        email: {type: string, format: email}
+        matricula: {type: string}
+        senha: {type: string, minLength: 8}
+    Pessoa:
+      type: object
+      required: [id, nome, email, matricula]
+      properties: {id: {type: integer}, nome: {type: string}, email: {type: string}, matricula: {type: string}}
+    Disciplina:
+      type: object
+      required: [id, nome, turma_id, professor_id, carga_horaria]
+      properties:
+        id: {type: integer}
+        nome: {type: string}
+        turma_id: {type: integer}
+        professor_id: {type: integer}
+        carga_horaria: {type: integer}
+    QuatroValores:
+      type: array
+      minItems: 4
+      maxItems: 4
+      items: {type: [number, "null"], minimum: 0}
+    LinhaBoletim:
+      type: object
+      required: [aluno_id, nome, matricula, notas, recuperacoes, faltas, media, media_parcial, situacao]
+      properties:
+        aluno_id: {type: integer}
+        nome: {type: string}
+        matricula: {type: string}
+        notas: {$ref: "#/components/schemas/QuatroValores"}
+        recuperacoes: {$ref: "#/components/schemas/QuatroValores"}
+        faltas: {type: integer, description: soma das faltas registradas}
+        media: {type: number, description: "0 quando nada foi lançado"}
+        media_parcial: {type: number}
+        situacao: {enum: [cursando, aprovado, reprovado, reprovado_por_faltas]}

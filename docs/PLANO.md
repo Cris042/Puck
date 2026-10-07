@@ -73,3 +73,5 @@ ponta a ponta com repositórios git locais.
 | P-06 | Juiz de outro provider: qual modelo | definir antes do piloto |
 | P-07 | Base técnica entregue também à M1 | aceitar e declarar como ameaça à validade |
 | P-08 | Tiers da M2: strong = Opus 5.5, medium = Sonnet 5.5, weak = Haiku 4.5 | confirmar |
+| P-09 | Prazo de lançamento (RF-05) bloqueia lançamento fora dele? O legado só marca `atrasada_*`; o efeito não foi caracterizado | contrato aceita definir o prazo, mas não exige bloqueio; oráculo não testa |
+| P-10 | Tipo real das colunas de notas em 2024 (texto × INT, que arredonda a média) | dourado assume texto (valor calculado pelo PHP); confirmar com um dump do banco de 2024, se existir |
