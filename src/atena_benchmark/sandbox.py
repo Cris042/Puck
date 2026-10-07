@@ -381,6 +381,7 @@ HARNESS_IMAGES = {
     ORACLE_IMAGE: Path("oracle"),
     "puck-referencia": Path("oracle") / "referencia",
     "puck-usabilidade": Path("oracle") / "usabilidade",
+    "puck-qualidade": Path("docker") / "qualidade",
 }
 
 

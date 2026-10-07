@@ -11,6 +11,12 @@ RUN apt-get update \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# PHPMetrics em phar: ferramenta do HARNESS, isolada do vendor do projeto (acoplamento, LCOM,
+# abstratividade e distância da sequência principal por namespace).
+RUN curl -fsSL -o /opt/phpmetrics.phar \
+      https://github.com/phpmetrics/PhpMetrics/releases/download/v2.11.0/phpmetrics.phar \
+ && php /opt/phpmetrics.phar --version
+
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_NO_INTERACTION=1 \
     PCOV_ENABLED=1

@@ -42,7 +42,7 @@ Protocolo de referência: *Benchmark de metodologias de desenvolvimento assistid
 | **A. Reorientação do harness** ✅ 2026-10-07 | eixos tech × metodologia; M1 agente único; M2 hierárquica com documentos; telemetria em chamada separada e validada; prompts na estrutura de 8 seções; `models.yaml` só Claude com `effort`; SHAs dos 4 repositórios no `summary.json`; mediana + pontos brutos; dois juízes | testes do harness passam; dry-run com modelos falsos produz todos os artefatos | 2, 3, 5 |
 | **B. Alvos executáveis** ✅ 2026-10-07 | esqueletos Laravel e Go conforme a base técnica; compose com PostgreSQL; etapa do harness que sobe a app e espera `/saude` | esqueleto sobe duas vezes do zero com o mesmo resultado | 1 |
 | **C. Oráculo** ✅ 2026-10-07 | Atena legado rodando (PHP + banco do MER); contrato HTTP (OpenAPI); suíte de caracterização HTTP independente de stack; dataset dourado; seed sintético | quebrar regra de propósito e o oráculo acusar; baseline reproduzível duas vezes | 1 |
-| **D. Analyzers** | Deptrac / go-arch-lint com o contrato; lizard, jscpd, cobertura, PHPStan, staticcheck; delta base → head | métricas reconstruídas só pelos artefatos | 3 |
+| **D. Analyzers** ✅ 2026-10-07 | Deptrac / go-arch-lint com o contrato; lizard, jscpd, cobertura, PHPStan, staticcheck; delta base → head | métricas reconstruídas só pelos artefatos | 3 |
 | **E. RAG + MCP** | extração de regras (Pydantic) → dataset dourado; índice pgvector híbrido + rerank; `buscar_contexto_legado`; servidor MCP com `pathguard`; avaliação de 30 perguntas | delta vetorial × híbrida medido; índice congelado | 4, 5 |
 | **F. Usabilidade, carga, segurança** ✅ 2026-10-07 | Playwright (KLM), k6, ZAP baseline, Semgrep por linguagem | cenários idênticos rodando contra as duas stacks | 6 |
 | **G. Piloto e campanha** | calibração dos juízes; ruído de base; 8 execuções; análise | protocolo, seção 10, etapas 6 e 7 | 6, 7 |
@@ -74,8 +74,10 @@ ponta a ponta com repositórios git locais.
 - **F:** SAST (regras validadas contra amostras boas e ruins), dependências, ZAP, k6 (aquecimento
   + 3 rodadas, mediana) e usabilidade (reexecução de roteiros gravados + KLM), todos verificados
   contra a referência pelo sandbox.
-- **Falta:** D (analyzers de qualidade), E (RAG + MCP), G (piloto e campanha); gravações de
-  usabilidade são manuais por célula.
+- **D:** analisador de qualidade com a régua do harness; as duas stacks dão a mesma leitura para a
+  mesma estrutura (ciclo, duplicação, complexidade e violações plantadas). O contrato Go foi
+  corrigido: proibia dependência dentro da mesma camada, o que o Deptrac e a base técnica permitem.
+- **Falta:** E (RAG + MCP), G (piloto e campanha); gravações de usabilidade são manuais por célula.
 
 ## 5. Decisões pendentes (precisam do seu aval)
 

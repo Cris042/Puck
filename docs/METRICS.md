@@ -57,6 +57,7 @@ Rodam no esqueleto e no final, pelo sandbox, fora do alcance dos agentes. Todas 
 | `sast` | `sast_<regra>`, `sast_total`, `sast_erros_varredura` | Semgrep 1.179.0, `config/semgrep/<linguagem>.yml` |
 | `dependencias` | `deps_vulnerabilidades`, `deps_alcancaveis` | `composer audit` / `govulncheck` (base consultada na data da execução) |
 | `dast` | `dast_alto`, `dast_medio`, `dast_baixo`, `dast_info` | ZAP baseline 2.17.0 |
+| `qualidade` | `cc_media_x100`, `cc_p90`, `cc_max`, `funcoes_cc_acima_10`, `funcoes_longas`, `dup_blocos`, `dup_linhas`, `dup_permil`, `modulos`, `ciclos_modulos`, `modulos_em_ciclo`, `raio_impacto_max`, `raio_impacto_medio_x100`, `instabilidade_media_x1000`, `abstracao_media_x1000`, `distancia_media_x1000`, `lcom_media_x100` (PHP), `arch_violacoes`, `estatica_erros`, `deps_diretas` | lizard 1.24.1, jscpd 5.4.0, PHPMetrics 2.11.0, Deptrac/PHPStan do projeto com a config do harness, go-arch-lint/staticcheck/go vet, grafo de imports |
 | `carga` | `carga_{leitura,escrita}_{p50,p95,max}_ms`, `_falhas_permil`, `carga_req_por_s_x100` (mediana e `_rN` por rodada) | k6 2.3.0, `oracle/carga/cenario.js` |
 
 Checks do projeto (`config/checks.<tech>.yaml`): `lint`, `arch` (contrato de camadas), `test` e
@@ -74,7 +75,11 @@ KLM do roteiro gravado (`klm_ms`, operadores K/P/B/H/M, campos, cliques). Protoc
 escrita reproduz todos os resultados do legado; a implementação de referência passa em tudo; e
 cada uma das seis mutações deliberadas é acusada na área certa.
 
+Comparáveis entre techs: complexidade, duplicação, ciclos, raio de impacto, violações de
+fronteira e achados estáticos. Só dentro da tech: LCOM, abstratividade, instabilidade e distância
+(definições diferentes em PHP e Go). A régua de arquitetura e de análise estática é a do harness
+(`oracle/qualidade/`, idêntica ao contrato publicado); o projeto não consegue afrouxá-la.
+
 ## A implementar
 
-Analyzers de qualidade por linguagem (fase D: lizard, jscpd, PHPMetrics, acoplamento) e catálogo
-de falhas por tipo.
+Catálogo de falhas por tipo (factual, citação, estrutural, contextual, código).

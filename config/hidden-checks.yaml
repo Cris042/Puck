@@ -34,3 +34,11 @@ checks:
     command: ["{python}", -m, atena_benchmark, sandbox, carga, --tech, "{tech}", --repo, "{repo_dir}"]
     timeout_seconds: 1800
     parser: puck_metrics
+
+  # Qualidade (protocolo 4.3) com a régua do harness (oracle/qualidade): complexidade e
+  # duplicação (lizard, jscpd), ciclos e raio de impacto entre módulos, Ca/Ce/I/A/D, LCOM (PHP),
+  # violações de fronteira e análise estática. Delta = esqueleto × final.
+  qualidade:
+    command: ["{python}", -m, atena_benchmark, sandbox, qualidade, --tech, "{tech}", --repo, "{repo_dir}"]
+    timeout_seconds: 1800
+    parser: puck_metrics

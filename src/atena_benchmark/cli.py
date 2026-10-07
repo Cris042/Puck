@@ -228,6 +228,14 @@ def sandbox_carga(
     raise typer.Exit(carga(tech, repo, rodadas, duracao))
 
 
+@sandbox_app.command("qualidade")
+def sandbox_qualidade(tech: Annotated[str, typer.Option("--tech")], repo: Annotated[Path, typer.Option("--repo")]):
+    """Complexidade, duplicação, acoplamento, ciclos, fronteiras e análise estática (régua do harness)."""
+    from .qualidade import qualidade
+
+    raise typer.Exit(qualidade(tech, repo))
+
+
 @sandbox_app.command("subir")
 def sandbox_subir(
     tech: Annotated[str, typer.Option("--tech")],

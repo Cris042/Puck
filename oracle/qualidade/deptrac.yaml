@@ -1,0 +1,46 @@
+# Contrato de camadas da base técnica (seção 1.3), por função dentro de cada módulo:
+#   app/Modulos/<Modulo>/{Http,Dto,Actor,Service,Builder,Dominio,Dao,Helper}/
+# Interfaces com prefixo I (ex.: IBoletimDAO) são portas e pertencem à camada de aplicação,
+# mesmo quando ficam em Dao/; implementações de Dao/ e app/Infra/ são infraestrutura.
+deptrac:
+  paths:
+    - ./app
+  layers:
+    - name: Domain
+      collectors:
+        - type: directory
+          value: app/Modulos/[^/]+/(Dominio|Service)/.*
+    - name: Application
+      collectors:
+        - type: directory
+          value: app/Modulos/[^/]+/(Actor|Builder|Helper)/.*
+        - type: bool
+          must:
+            - type: directory
+              value: app/(Modulos/[^/]+/Dao|Infra)/.*
+            - type: interface
+              value: .*\\I[A-Z][A-Za-z0-9]*$
+    - name: Infrastructure
+      collectors:
+        - type: bool
+          must:
+            - type: directory
+              value: app/(Modulos/[^/]+/Dao|Infra)/.*
+          must_not:
+            - type: interface
+              value: .*\\I[A-Z][A-Za-z0-9]*$
+    - name: Interface
+      collectors:
+        - type: directory
+          value: app/Modulos/[^/]+/(Http|Dto)/.*
+    # Framework: domínio e regra de negócio não podem depender dele.
+    - name: Framework
+      collectors:
+        - type: classNameRegex
+          value: /^Illuminate\\.*/
+  ruleset:
+    Domain: ~
+    Application: [Domain]
+    Infrastructure: [Application, Domain, Framework]
+    Interface: [Application, Domain, Framework]
+    Framework: ~
